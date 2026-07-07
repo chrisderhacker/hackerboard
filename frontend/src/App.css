@@ -12,14 +12,18 @@
   --bg-tertiary: #1b2021;
   --bg-elevated: #21272a;
 
+  /* Solid panel surfaces — clear over the animated background */
+  --panel: #16191b;
+  --panel-raise: #1c2023;
+
   /* Glass panels */
   --glass: rgba(255, 255, 255, 0.03);
   --glass-strong: rgba(255, 255, 255, 0.06);
 
   /* Text */
-  --text-primary: #f2f5f3;
-  --text-secondary: #9aa5a0;
-  --text-muted: #5c6663;
+  --text-primary: #f4f6f4;
+  --text-secondary: #aeb8b3;
+  --text-muted: #737d79;
 
   /* Accents — lime hero + ice blue partner */
   --accent: #c6ff4a;
@@ -30,8 +34,8 @@
   --blue-dim: rgba(74, 194, 255, 0.15);
   --blue-glow: rgba(74, 194, 255, 0.3);
 
-  --border: rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.12);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.16);
 
   --success: #10b981;
   --warning: #f59e0b;
@@ -242,7 +246,7 @@ body {
 
 .filter-chip {
   padding: 0.45rem 1rem;
-  background: var(--glass);
+  background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 999px;
   color: var(--text-secondary);

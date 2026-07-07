@@ -1,6 +1,6 @@
 .card {
   position: relative;
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  background: linear-gradient(160deg, var(--panel-raise), var(--panel));
   border-radius: var(--radius);
   padding: 1.1rem;
   cursor: pointer;
@@ -10,6 +10,7 @@
   height: 100%;
   transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
   isolation: isolate;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 /* Static hairline border */
@@ -21,6 +22,7 @@
   border: 1px solid var(--border);
   pointer-events: none;
   transition: opacity 0.3s ease;
+  opacity: 1;
 }
 
 /* Animated glow border — rotating lime→blue conic gradient, revealed on hover */

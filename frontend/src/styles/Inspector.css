@@ -1,6 +1,6 @@
 .inspector {
   width: 380px;
-  background: rgba(14, 17, 18, 0.85);
+  background: rgba(16, 19, 21, 0.96);
   backdrop-filter: blur(20px);
   border-left: 1px solid var(--border);
   display: flex;
@@ -168,7 +168,7 @@
 .form-group input,
 .form-group textarea,
 .form-group select {
-  background: var(--glass);
+  background: var(--bg-primary);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
