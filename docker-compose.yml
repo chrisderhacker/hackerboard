@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: hackerboard-postgres
+    environment:
+      POSTGRES_USER: hackerboard
+      POSTGRES_PASSWORD: hackerboard_dev_pass
+      POSTGRES_DB: hackerboard
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hackerboard"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    container_name: hackerboard-backend
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://hackerboard:hackerboard_dev_pass@postgres:5432/hackerboard
+      PORT: 3002
+    ports:
+      - "3002:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend/src:/app/src
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

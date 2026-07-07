@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Card {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  thumbnail   String?
+  status      String   @default("inbox")
+  nextStep    String?
+  dueDate     DateTime?
+  section     String   @default("inbox")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tags        String[]
+  files       File[]
+  links       Link[]
+  notes       Note[]
+  checklist   ChecklistItem[]
+  activities  Activity[]
+
+  @@index([section])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model File {
+  id        String   @id @default(cuid())
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  name      String
+  url       String
+  type      String
+  size      Int
+  createdAt DateTime @default(now())
+
+  @@index([cardId])
+}
+
+model Link {
+  id        String   @id @default(cuid())
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  title     String?
+  url       String
+  createdAt DateTime @default(now())
+
+  @@index([cardId])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+
+  @@index([cardId])
+}
+
+model ChecklistItem {
+  id        String   @id @default(cuid())
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  text      String
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([cardId])
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  cardId    String
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  type      String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([cardId])
+  @@index([createdAt])
+}
