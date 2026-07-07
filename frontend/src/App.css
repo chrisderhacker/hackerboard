@@ -139,6 +139,27 @@ body {
   transform: translateY(-1px);
 }
 
+.new-card-btn {
+  padding: 0.45rem 1.1rem;
+  background: var(--accent);
+  border: none;
+  border-radius: 999px;
+  color: #10140a;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 650;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 20px rgba(198, 255, 74, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  margin-left: 0.5rem;
+}
+
+.new-card-btn:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 0 32px rgba(198, 255, 74, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
 .filter-chip.active {
   background: var(--accent-dim);
   color: var(--accent);

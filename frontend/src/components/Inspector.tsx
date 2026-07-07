@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FileIcon, XIcon } from './Icons'
+import { sections } from './Sidebar'
 import type { Card } from '../types'
 import '../styles/Inspector.css'
 
@@ -7,16 +8,31 @@ interface InspectorProps {
   card: Card
   onClose: () => void
   onUpdate: (card: Card) => void
+  onDelete: () => void
 }
 
-export default function Inspector({ card, onClose, onUpdate }: InspectorProps) {
+export default function Inspector({ card, onClose, onUpdate, onDelete }: InspectorProps) {
   const [title, setTitle] = useState(card.title)
   const [description, setDescription] = useState(card.description || '')
   const [nextStep, setNextStep] = useState(card.nextStep || '')
   const [status, setStatus] = useState(card.status)
+  const [section, setSection] = useState(card.section)
+  const [dueDate, setDueDate] = useState(card.dueDate?.split('T')[0] || '')
+  const [saving, setSaving] = useState(false)
+
+  // Sync form when a different card is selected
+  useEffect(() => {
+    setTitle(card.title)
+    setDescription(card.description || '')
+    setNextStep(card.nextStep || '')
+    setStatus(card.status)
+    setSection(card.section)
+    setDueDate(card.dueDate?.split('T')[0] || '')
+  }, [card.id])
 
   const handleSave = async () => {
     try {
+      setSaving(true)
       const response = await fetch(`/api/cards/${card.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -25,12 +41,44 @@ export default function Inspector({ card, onClose, onUpdate }: InspectorProps) {
           description,
           nextStep,
           status,
+          section,
+          dueDate: dueDate || null,
         }),
       })
+      if (!response.ok) throw new Error(`API ${response.status}`)
       const updated = await response.json()
       onUpdate(updated)
     } catch (error) {
       console.error('Failed to update card:', error)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleArchive = async () => {
+    try {
+      const response = await fetch(`/api/cards/${card.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: 'archive', status: 'archived' }),
+      })
+      if (!response.ok) throw new Error(`API ${response.status}`)
+      onUpdate(await response.json())
+    } catch (error) {
+      console.error('Failed to archive card:', error)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!window.confirm(`„${card.title}" wirklich löschen? Das kann nicht rückgängig gemacht werden.`)) {
+      return
+    }
+    try {
+      const response = await fetch(`/api/cards/${card.id}`, { method: 'DELETE' })
+      if (!response.ok) throw new Error(`API ${response.status}`)
+      onDelete()
+    } catch (error) {
+      console.error('Failed to delete card:', error)
     }
   }
 
@@ -71,14 +119,27 @@ export default function Inspector({ card, onClose, onUpdate }: InspectorProps) {
             />
           </div>
 
-          <div className="form-group">
-            <label>Status</label>
-            <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="inbox">Inbox</option>
-              <option value="in-progress">In Progress</option>
-              <option value="done">Done</option>
-              <option value="archived">Archived</option>
-            </select>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Status</label>
+              <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                <option value="inbox">Inbox</option>
+                <option value="in-progress">In Progress</option>
+                <option value="done">Done</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Section</label>
+              <select value={section} onChange={(e) => setSection(e.target.value)}>
+                {sections.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div className="form-group">
@@ -91,29 +152,23 @@ export default function Inspector({ card, onClose, onUpdate }: InspectorProps) {
             />
           </div>
 
-          {card.dueDate && (
-            <div className="form-group">
-              <label>Due Date</label>
-              <input
-                type="date"
-                value={card.dueDate?.split('T')[0] || ''}
-                disabled
-              />
-            </div>
-          )}
+          <div className="form-group">
+            <label>Due Date</label>
+            <input
+              type="date"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+          </div>
         </div>
 
         {card.checklist && card.checklist.length > 0 && (
           <div className="inspector-section">
             <h3>Checklist</h3>
             <div className="checklist">
-              {card.checklist.map((item: any) => (
+              {card.checklist.map((item) => (
                 <div key={item.id} className="checklist-item">
-                  <input
-                    type="checkbox"
-                    defaultChecked={item.completed}
-                    disabled
-                  />
+                  <input type="checkbox" defaultChecked={item.completed} disabled />
                   <span>{item.text}</span>
                 </div>
               ))}
@@ -125,11 +180,17 @@ export default function Inspector({ card, onClose, onUpdate }: InspectorProps) {
           <div className="inspector-section">
             <h3>Files ({card.files.length})</h3>
             <div className="files-list">
-              {card.files.map((file: any) => (
-                <div key={file.id} className="file-item">
+              {card.files.map((file) => (
+                <a
+                  key={file.id}
+                  className="file-item"
+                  href={file.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   <FileIcon size={15} className="file-icon" />
                   <span className="file-name">{file.name}</span>
-                </div>
+                </a>
               ))}
             </div>
           </div>
@@ -139,10 +200,15 @@ export default function Inspector({ card, onClose, onUpdate }: InspectorProps) {
           <div className="inspector-section">
             <h3>Activity</h3>
             <div className="activity-list">
-              {card.activities.map((activity: any) => (
+              {card.activities.map((activity) => (
                 <div key={activity.id} className="activity-item">
                   <span className="activity-time">
-                    {new Date(activity.createdAt).toLocaleDateString()}
+                    {new Date(activity.createdAt).toLocaleString('de-DE', {
+                      day: '2-digit',
+                      month: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
                   </span>
                   <span className="activity-message">{activity.message}</span>
                 </div>
@@ -152,11 +218,14 @@ export default function Inspector({ card, onClose, onUpdate }: InspectorProps) {
         )}
 
         <div className="inspector-actions">
-          <button className="btn-primary" onClick={handleSave}>
-            Save Changes
+          <button className="btn-primary" onClick={handleSave} disabled={saving}>
+            {saving ? 'Speichert…' : 'Speichern'}
           </button>
-          <button className="btn-secondary" onClick={onClose}>
-            Close
+          <button className="btn-secondary" onClick={handleArchive}>
+            Archivieren
+          </button>
+          <button className="btn-danger" onClick={handleDelete} title="Card löschen">
+            Löschen
           </button>
         </div>
       </div>

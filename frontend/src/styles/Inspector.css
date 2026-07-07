@@ -124,6 +124,16 @@
   gap: 0.45rem;
 }
 
+.form-row {
+  display: flex;
+  gap: 0.65rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+  min-width: 0;
+}
+
 .form-group label {
   font-size: 0.68rem;
   font-weight: 600;
@@ -312,4 +322,29 @@
   border-color: var(--border-strong);
   color: var(--text-primary);
   background: var(--glass-strong);
+}
+
+.btn-danger {
+  flex: 0 0 auto;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  font-size: 0.85rem;
+  font-family: inherit;
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
+}
+
+.file-item {
+  text-decoration: none;
+  color: var(--text-secondary);
 }

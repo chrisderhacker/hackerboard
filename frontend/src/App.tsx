@@ -52,8 +52,6 @@ function App() {
     const newCards: Card[] = []
     for (const file of Array.from(files)) {
       const title = file.name.replace(/\.[^.]+$/, '')
-      const isImage = file.type.startsWith('image/')
-      let created: Card | null = null
       try {
         const response = await fetch('/api/cards', {
           method: 'POST',
@@ -61,21 +59,38 @@ function App() {
           body: JSON.stringify({ title, section: activeSection, status: 'inbox', tags: [] }),
         })
         if (!response.ok) throw new Error(`API ${response.status}`)
-        created = await response.json()
-      } catch {
-        created = {
-          id: `local-${crypto.randomUUID()}`,
-          title,
-          status: 'inbox',
-          section: activeSection,
-          tags: [],
-          thumbnail: isImage ? URL.createObjectURL(file) : undefined,
-          files: [{ id: `local-file-${file.name}`, name: file.name }],
-        }
+        let created: Card = await response.json()
+
+        const formData = new FormData()
+        formData.append('file', file)
+        const uploadResponse = await fetch(`/api/cards/${created.id}/files`, {
+          method: 'POST',
+          body: formData,
+        })
+        if (uploadResponse.ok) created = await uploadResponse.json()
+
+        newCards.push(created)
+      } catch (error) {
+        console.error('Upload fehlgeschlagen:', file.name, error)
       }
-      if (created) newCards.push(created)
     }
     if (newCards.length) setCards((prev) => [...newCards, ...prev])
+  }
+
+  const createEmptyCard = async () => {
+    try {
+      const response = await fetch('/api/cards', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: 'Neue Card', section: activeSection, status: 'inbox', tags: [] }),
+      })
+      if (!response.ok) throw new Error(`API ${response.status}`)
+      const created: Card = await response.json()
+      setCards((prev) => [created, ...prev])
+      setSelectedCard(created)
+    } catch (error) {
+      console.error('Card konnte nicht erstellt werden:', error)
+    }
   }
 
   const handleDragEnter = (e: DragEvent) => {
@@ -147,6 +162,9 @@ function App() {
               <button className="filter-chip">All</button>
               <button className="filter-chip">Pinned</button>
               <button className="filter-chip">Due Soon</button>
+              <button className="new-card-btn" onClick={createEmptyCard}>
+                + Neue Card
+              </button>
             </div>
           </div>
 
@@ -166,7 +184,15 @@ function App() {
             card={selectedCard}
             onClose={() => setSelectedCard(null)}
             onUpdate={(updated) => {
-              setSelectedCard(updated)
+              if (updated.section !== activeSection) {
+                setSelectedCard(null)
+              } else {
+                setSelectedCard(updated)
+              }
+              fetchCards()
+            }}
+            onDelete={() => {
+              setSelectedCard(null)
               fetchCards()
             }}
           />

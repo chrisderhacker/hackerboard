@@ -1,9 +1,13 @@
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import staticPlugin from '@fastify/static'
+import multipart from '@fastify/multipart'
 import { PrismaClient } from '@prisma/client'
 import { fileURLToPath } from 'url'
-import { dirname, join } from 'path'
+import { dirname, join, extname } from 'path'
+import { createWriteStream, promises as fsp } from 'fs'
+import { pipeline } from 'stream/promises'
+import { randomUUID } from 'crypto'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -12,9 +16,16 @@ const fastify = Fastify({ logger: true })
 const prisma = new PrismaClient()
 const PORT = parseInt(process.env.PORT || '3002', 10)
 const HOST = '0.0.0.0'
+const UPLOAD_DIR = process.env.UPLOAD_DIR || join(__dirname, '../uploads')
+
+await fsp.mkdir(UPLOAD_DIR, { recursive: true })
 
 await fastify.register(cors, {
   origin: true,
+})
+
+await fastify.register(multipart, {
+  limits: { fileSize: 500 * 1024 * 1024 },
 })
 
 const cardInclude = {
@@ -45,8 +56,8 @@ function pickCardData(body: Record<string, unknown>) {
   if (typeof body.nextStep === 'string' || body.nextStep === null) data.nextStep = body.nextStep
   if (typeof body.section === 'string') data.section = body.section
   if (Array.isArray(body.tags)) data.tags = JSON.stringify(body.tags)
-  if (typeof body.dueDate === 'string') data.dueDate = new Date(body.dueDate)
-  if (body.dueDate === null) data.dueDate = null
+  if (typeof body.dueDate === 'string' && body.dueDate) data.dueDate = new Date(body.dueDate)
+  if (body.dueDate === null || body.dueDate === '') data.dueDate = null
   return data
 }
 
@@ -109,11 +120,60 @@ fastify.patch('/api/cards/:id', async (request: any, reply) => {
 
 fastify.delete('/api/cards/:id', async (request: any, reply) => {
   try {
-    await prisma.card.delete({ where: { id: request.params.id } })
+    const card = await prisma.card.findUnique({
+      where: { id: request.params.id },
+      include: { files: true },
+    })
+    if (!card) return reply.code(404).send({ error: 'Card not found' })
+    // Remove uploaded files from disk along with the card
+    for (const file of card.files) {
+      const name = file.url.split('/').pop()
+      if (name) await fsp.unlink(join(UPLOAD_DIR, name)).catch(() => {})
+    }
+    await prisma.card.delete({ where: { id: card.id } })
     return { deleted: true }
   } catch {
     return reply.code(404).send({ error: 'Card not found' })
   }
+})
+
+// File upload — multipart, stores on disk, first image becomes the thumbnail
+fastify.post('/api/cards/:id/files', async (request: any, reply) => {
+  const card = await prisma.card.findUnique({ where: { id: request.params.id } })
+  if (!card) return reply.code(404).send({ error: 'Card not found' })
+
+  const upload = await request.file()
+  if (!upload) return reply.code(400).send({ error: 'no file' })
+
+  const ext = extname(upload.filename || '').toLowerCase().slice(0, 10)
+  const storedName = `${randomUUID()}${ext}`
+  await pipeline(upload.file, createWriteStream(join(UPLOAD_DIR, storedName)))
+  const stat = await fsp.stat(join(UPLOAD_DIR, storedName))
+  const url = `/uploads/${storedName}`
+
+  await prisma.file.create({
+    data: {
+      cardId: card.id,
+      name: upload.filename || storedName,
+      url,
+      type: upload.mimetype || 'application/octet-stream',
+      size: stat.size,
+    },
+  })
+
+  const isImage = (upload.mimetype || '').startsWith('image/')
+  await prisma.card.update({
+    where: { id: card.id },
+    data: {
+      ...(isImage && !card.thumbnail ? { thumbnail: url } : {}),
+      activities: {
+        create: { type: 'file', message: `Datei hochgeladen: ${upload.filename}` },
+      },
+    },
+  })
+
+  const updated = await prisma.card.findUnique({ where: { id: card.id }, include: cardInclude })
+  return parseCard(updated!)
 })
 
 // Checklist
@@ -130,6 +190,13 @@ fastify.patch('/api/checklist/:id', async (request: any) => {
   })
 })
 
+// Uploaded files
+await fastify.register(staticPlugin, {
+  root: UPLOAD_DIR,
+  prefix: '/uploads/',
+  decorateReply: false,
+})
+
 // Serve frontend static files
 await fastify.register(staticPlugin, {
   root: join(__dirname, '../public'),
@@ -138,7 +205,7 @@ await fastify.register(staticPlugin, {
 
 // Catch-all for SPA routing
 fastify.setNotFoundHandler((request, reply) => {
-  if (request.url.startsWith('/api/')) {
+  if (request.url.startsWith('/api/') || request.url.startsWith('/uploads/')) {
     reply.code(404).send({ error: 'Not found' })
     return
   }
