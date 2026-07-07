@@ -35,7 +35,7 @@
   border: 1px dashed var(--border-strong);
   border-radius: var(--radius);
   background:
-    radial-gradient(ellipse 400px 200px at 50% 0%, rgba(198, 255, 74, 0.04), transparent 70%),
+    radial-gradient(ellipse 400px 200px at 50% 0%, rgba(204, 255, 0, 0.04), transparent 70%),
     var(--glass);
   position: relative;
   overflow: hidden;
@@ -54,7 +54,7 @@
 .empty-icon {
   font-size: 2.6rem;
   opacity: 0.6;
-  filter: drop-shadow(0 0 20px rgba(198, 255, 74, 0.2));
+  filter: drop-shadow(0 0 20px rgba(204, 255, 0, 0.2));
 }
 
 .empty-text {

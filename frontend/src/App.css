@@ -25,14 +25,14 @@
   --text-secondary: #aeb8b3;
   --text-muted: #737d79;
 
-  /* Accents — lime hero + ice blue partner */
-  --accent: #c6ff4a;
-  --accent-hover: #d6ff70;
-  --accent-dim: rgba(198, 255, 74, 0.15);
-  --accent-glow: rgba(198, 255, 74, 0.35);
-  --blue: #4ac2ff;
-  --blue-dim: rgba(74, 194, 255, 0.15);
-  --blue-glow: rgba(74, 194, 255, 0.3);
+  /* Accents — punchy lime hero + warm coral partner */
+  --accent: #ccff00;
+  --accent-hover: #d9ff33;
+  --accent-dim: rgba(204, 255, 0, 0.15);
+  --accent-glow: rgba(204, 255, 0, 0.38);
+  --blue: #ff8a5c;
+  --blue-dim: rgba(255, 138, 92, 0.15);
+  --blue-glow: rgba(255, 138, 92, 0.3);
 
   --border: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.16);
@@ -150,7 +150,7 @@ body {
     transparent,
     rgba(205, 224, 248, 0.22),
     rgba(150, 185, 225, 0.14) 55%,
-    rgba(198, 255, 74, 0.05) 80%,
+    rgba(204, 255, 0, 0.05) 80%,
     transparent
   );
   filter: blur(58px);
@@ -233,7 +233,7 @@ body {
   font-weight: 650;
   letter-spacing: -0.02em;
   text-transform: capitalize;
-  background: linear-gradient(120deg, var(--text-primary) 60%, rgba(198, 255, 74, 0.85));
+  background: linear-gradient(120deg, var(--text-primary) 60%, rgba(204, 255, 0, 0.85));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -261,7 +261,7 @@ body {
   color: var(--text-primary);
   border-color: var(--border-strong);
   background: var(--glass-strong);
-  box-shadow: 0 0 20px rgba(198, 255, 74, 0.08);
+  box-shadow: 0 0 20px rgba(204, 255, 0, 0.08);
   transform: translateY(-1px);
 }
 
@@ -289,7 +289,7 @@ body {
   inset: -8px;
   z-index: -1;
   border-radius: 999px;
-  background: radial-gradient(closest-side, rgba(198, 255, 74, 0.7), rgba(198, 255, 74, 0.15) 65%, transparent 80%);
+  background: radial-gradient(closest-side, rgba(204, 255, 0, 0.7), rgba(204, 255, 0, 0.15) 65%, transparent 80%);
   filter: blur(14px);
   animation: btn-glow 5.5s ease-in-out infinite;
   pointer-events: none;
@@ -349,8 +349,8 @@ body {
 .filter-chip.active {
   background: var(--accent-dim);
   color: var(--accent);
-  border-color: rgba(198, 255, 74, 0.4);
-  box-shadow: 0 0 24px rgba(198, 255, 74, 0.15), inset 0 0 12px rgba(198, 255, 74, 0.05);
+  border-color: rgba(204, 255, 0, 0.4);
+  box-shadow: 0 0 24px rgba(204, 255, 0, 0.15), inset 0 0 12px rgba(204, 255, 0, 0.05);
 }
 
 /* Drag & drop overlay */
@@ -379,33 +379,33 @@ body {
   align-items: center;
   gap: 0.8rem;
   padding: 3.5rem 5rem;
-  border: 1.5px dashed rgba(198, 255, 74, 0.5);
+  border: 1.5px dashed rgba(204, 255, 0, 0.5);
   border-radius: 20px;
   background:
-    radial-gradient(ellipse 400px 220px at 50% 0%, rgba(198, 255, 74, 0.08), transparent 70%),
-    radial-gradient(ellipse 400px 220px at 50% 100%, rgba(74, 194, 255, 0.08), transparent 70%),
+    radial-gradient(ellipse 400px 220px at 50% 0%, rgba(204, 255, 0, 0.08), transparent 70%),
+    radial-gradient(ellipse 400px 220px at 50% 100%, rgba(255, 138, 92, 0.08), transparent 70%),
     #121617;
   box-shadow:
-    0 0 60px rgba(198, 255, 74, 0.15),
-    0 0 120px rgba(74, 194, 255, 0.1),
-    inset 0 0 60px rgba(198, 255, 74, 0.04);
+    0 0 60px rgba(204, 255, 0, 0.15),
+    0 0 120px rgba(255, 138, 92, 0.1),
+    inset 0 0 60px rgba(204, 255, 0, 0.04);
   animation: drop-pulse 1.6s ease-in-out infinite;
 }
 
 @keyframes drop-pulse {
   0%, 100% {
     box-shadow:
-      0 0 60px rgba(198, 255, 74, 0.15),
-      0 0 120px rgba(74, 194, 255, 0.1),
-      inset 0 0 60px rgba(198, 255, 74, 0.04);
-    border-color: rgba(198, 255, 74, 0.5);
+      0 0 60px rgba(204, 255, 0, 0.15),
+      0 0 120px rgba(255, 138, 92, 0.1),
+      inset 0 0 60px rgba(204, 255, 0, 0.04);
+    border-color: rgba(204, 255, 0, 0.5);
   }
   50% {
     box-shadow:
-      0 0 80px rgba(198, 255, 74, 0.25),
-      0 0 160px rgba(74, 194, 255, 0.18),
-      inset 0 0 80px rgba(198, 255, 74, 0.07);
-    border-color: rgba(74, 194, 255, 0.6);
+      0 0 80px rgba(204, 255, 0, 0.25),
+      0 0 160px rgba(255, 138, 92, 0.18),
+      inset 0 0 80px rgba(204, 255, 0, 0.07);
+    border-color: rgba(255, 138, 92, 0.6);
   }
 }
 
@@ -452,10 +452,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(198, 255, 74, 0.25);
+  background: rgba(204, 255, 0, 0.25);
   background-clip: padding-box;
 }
 
 ::selection {
-  background: rgba(198, 255, 74, 0.25);
+  background: rgba(204, 255, 0, 0.25);
 }

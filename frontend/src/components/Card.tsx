@@ -12,12 +12,12 @@ interface CardProps {
 export default function Card({ card, isSelected, onClick, onDelete }: CardProps) {
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      inbox: '#bfff00',
-      'in-progress': '#3b82f6',
+      inbox: '#ccff00',
+      'in-progress': '#ff8a5c',
       done: '#10b981',
       archived: '#6b7280',
     }
-    return colors[status] || '#bfff00'
+    return colors[status] || '#ccff00'
   }
 
   const formatDate = (date?: string) => {

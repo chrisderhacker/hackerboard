@@ -70,10 +70,10 @@
 }
 
 .nav-item.active {
-  background: linear-gradient(90deg, rgba(198, 255, 74, 0.1), rgba(198, 255, 74, 0.02));
+  background: linear-gradient(90deg, rgba(204, 255, 0, 0.1), rgba(204, 255, 0, 0.02));
   color: #ffffff;
-  border-color: rgba(198, 255, 74, 0.15);
-  box-shadow: 0 0 20px rgba(198, 255, 74, 0.06), inset 0 0 16px rgba(198, 255, 74, 0.04);
+  border-color: rgba(204, 255, 0, 0.15);
+  box-shadow: 0 0 20px rgba(204, 255, 0, 0.06), inset 0 0 16px rgba(204, 255, 0, 0.04);
 }
 
 /* Fine dot texture that fades out toward the right */
@@ -122,7 +122,7 @@
 
 .nav-item.active .nav-icon {
   opacity: 1;
-  filter: drop-shadow(0 0 6px rgba(198, 255, 74, 0.4));
+  filter: drop-shadow(0 0 6px rgba(204, 255, 0, 0.4));
 }
 
 /* Quick springy swing when a nav item is clicked */
@@ -173,9 +173,9 @@
 }
 
 .profile-btn:hover {
-  border-color: rgba(198, 255, 74, 0.3);
+  border-color: rgba(204, 255, 0, 0.3);
   color: var(--text-primary);
-  box-shadow: 0 0 20px rgba(198, 255, 74, 0.08);
+  box-shadow: 0 0 20px rgba(204, 255, 0, 0.08);
 }
 
 .avatar {
