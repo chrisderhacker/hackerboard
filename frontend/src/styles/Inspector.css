@@ -103,7 +103,7 @@
   border-radius: var(--radius-sm);
   background: var(--bg-primary);
   border: 1px solid var(--border);
-  box-shadow: 0 0 40px rgba(255, 138, 92, 0.05);
+  box-shadow: 0 0 40px rgba(204, 255, 0, 0.05);
   cursor: zoom-in;
   overflow: hidden;
 }
@@ -147,7 +147,7 @@
   z-index: 2;
   border-radius: inherit;
   pointer-events: none;
-  background: linear-gradient(135deg, rgba(204, 255, 0, 0.85), rgba(255, 138, 92, 0.85));
+  background: linear-gradient(135deg, rgba(204, 255, 0, 0.85), rgba(204, 255, 0, 0.85));
   -webkit-mask-image:
     radial-gradient(circle, black 0.5px, transparent 0.9px),
     radial-gradient(ellipse at 50% 50%, transparent 62%, black 90%, transparent 100%);
@@ -292,8 +292,8 @@
 }
 
 .file-item:hover {
-  border-color: rgba(255, 138, 92, 0.3);
-  box-shadow: 0 0 16px rgba(255, 138, 92, 0.06);
+  border-color: rgba(204, 255, 0, 0.3);
+  box-shadow: 0 0 16px rgba(204, 255, 0, 0.06);
 }
 
 .file-icon {

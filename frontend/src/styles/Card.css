@@ -49,7 +49,7 @@
   animation: glow-rotate 6.5s linear infinite paused;
   pointer-events: none;
   z-index: 1;
-  filter: drop-shadow(0 0 6px rgba(204, 255, 0, 0.45)) drop-shadow(0 0 8px rgba(255, 138, 92, 0.35));
+  filter: drop-shadow(0 0 6px rgba(204, 255, 0, 0.45)) drop-shadow(0 0 8px rgba(204, 255, 0, 0.35));
 }
 
 @property --glow-angle {
@@ -69,7 +69,7 @@
   box-shadow:
     0 12px 32px rgba(0, 0, 0, 0.5),
     0 0 60px rgba(204, 255, 0, 0.12),
-    0 0 90px rgba(255, 138, 92, 0.09);
+    0 0 90px rgba(204, 255, 0, 0.09);
 }
 
 .card:hover::before {
@@ -85,7 +85,7 @@
   box-shadow:
     0 12px 32px rgba(0, 0, 0, 0.5),
     0 0 60px rgba(204, 255, 0, 0.18),
-    0 0 100px rgba(255, 138, 92, 0.1);
+    0 0 100px rgba(204, 255, 0, 0.1);
 }
 
 .card.selected::before {
@@ -96,9 +96,9 @@
     rgba(204, 255, 0, 0.55) 0%,
     var(--accent) 15%,
     rgba(204, 255, 0, 0.55) 30%,
-    rgba(255, 138, 92, 0.6) 55%,
+    rgba(204, 255, 0, 0.6) 55%,
     var(--blue) 70%,
-    rgba(255, 138, 92, 0.6) 85%,
+    rgba(204, 255, 0, 0.6) 85%,
     rgba(204, 255, 0, 0.55) 100%
   );
 }
@@ -149,7 +149,7 @@
     135deg,
     rgba(204, 255, 0, 0.95),
     rgba(240, 255, 220, 0.55) 45%,
-    rgba(255, 138, 92, 0.95)
+    rgba(204, 255, 0, 0.95)
   );
   -webkit-mask-image:
     radial-gradient(circle, black 0.5px, transparent 0.9px),
@@ -312,10 +312,10 @@
 .tag {
   font-size: 0.68rem;
   padding: 0.22rem 0.5rem;
-  background: var(--blue-dim);
-  border: 1px solid rgba(255, 138, 92, 0.25);
+  background: var(--glass-strong);
+  border: 1px solid var(--border);
   border-radius: 4px;
-  color: var(--blue);
+  color: var(--text-secondary);
 }
 
 .tag-more {

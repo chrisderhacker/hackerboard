@@ -30,9 +30,9 @@
   --accent-hover: #d9ff33;
   --accent-dim: rgba(204, 255, 0, 0.15);
   --accent-glow: rgba(204, 255, 0, 0.38);
-  --blue: #ff8a5c;
-  --blue-dim: rgba(255, 138, 92, 0.15);
-  --blue-glow: rgba(255, 138, 92, 0.3);
+  --blue: #ccff00;
+  --blue-dim: rgba(204, 255, 0, 0.15);
+  --blue-glow: rgba(204, 255, 0, 0.3);
 
   --border: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.16);
@@ -63,9 +63,9 @@ body {
   height: 100vh;
   position: relative;
   background:
-    radial-gradient(ellipse 800px 500px at -5% -10%, rgba(170, 200, 235, 0.07), transparent 60%),
-    radial-gradient(ellipse 900px 600px at 105% 110%, rgba(74, 160, 235, 0.08), transparent 60%),
-    radial-gradient(ellipse 600px 400px at 60% -20%, rgba(220, 232, 250, 0.04), transparent 60%),
+    radial-gradient(ellipse 800px 500px at -5% -10%, rgba(200, 205, 208, 0.06), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 105% 110%, rgba(204, 255, 0, 0.05), transparent 60%),
+    radial-gradient(ellipse 600px 400px at 60% -20%, rgba(220, 222, 224, 0.04), transparent 60%),
     var(--bg-base);
   overflow: hidden;
 }
@@ -116,7 +116,7 @@ body {
   height: 640px;
   top: -220px;
   left: -160px;
-  background: radial-gradient(circle, rgba(170, 200, 235, 0.2), transparent 70%);
+  background: radial-gradient(circle, rgba(200, 205, 208, 0.14), transparent 70%);
   animation: drift-1 30s ease-in-out infinite;
 }
 
@@ -125,7 +125,7 @@ body {
   height: 760px;
   bottom: -280px;
   right: -200px;
-  background: radial-gradient(circle, rgba(74, 160, 235, 0.2), transparent 70%);
+  background: radial-gradient(circle, rgba(204, 255, 0, 0.06), transparent 70%);
   animation: drift-2 38s ease-in-out infinite;
 }
 
@@ -134,7 +134,7 @@ body {
   height: 480px;
   top: 35%;
   left: 45%;
-  background: radial-gradient(circle, rgba(190, 235, 120, 0.05), transparent 70%);
+  background: radial-gradient(circle, rgba(204, 255, 0, 0.05), transparent 70%);
   animation: drift-3 44s ease-in-out infinite;
 }
 
@@ -148,8 +148,8 @@ body {
   background: linear-gradient(
     180deg,
     transparent,
-    rgba(205, 224, 248, 0.22),
-    rgba(150, 185, 225, 0.14) 55%,
+    rgba(216, 219, 221, 0.2),
+    rgba(160, 163, 165, 0.12) 55%,
     rgba(204, 255, 0, 0.05) 80%,
     transparent
   );
@@ -169,7 +169,7 @@ body {
   background: linear-gradient(
     180deg,
     transparent,
-    rgba(220, 232, 250, 0.14),
+    rgba(222, 224, 226, 0.13),
     transparent 70%
   );
   filter: blur(40px);
@@ -259,9 +259,9 @@ body {
 
 .filter-chip:hover {
   color: var(--text-primary);
-  border-color: rgba(255, 138, 92, 0.35);
+  border-color: rgba(204, 255, 0, 0.35);
   background: var(--glass-strong);
-  box-shadow: 0 0 20px rgba(255, 138, 92, 0.1);
+  box-shadow: 0 0 20px rgba(204, 255, 0, 0.1);
   transform: translateY(-1px);
 }
 
@@ -383,11 +383,11 @@ body {
   border-radius: 20px;
   background:
     radial-gradient(ellipse 400px 220px at 50% 0%, rgba(204, 255, 0, 0.08), transparent 70%),
-    radial-gradient(ellipse 400px 220px at 50% 100%, rgba(255, 138, 92, 0.08), transparent 70%),
+    radial-gradient(ellipse 400px 220px at 50% 100%, rgba(204, 255, 0, 0.08), transparent 70%),
     #121617;
   box-shadow:
     0 0 60px rgba(204, 255, 0, 0.15),
-    0 0 120px rgba(255, 138, 92, 0.1),
+    0 0 120px rgba(204, 255, 0, 0.1),
     inset 0 0 60px rgba(204, 255, 0, 0.04);
   animation: drop-pulse 1.6s ease-in-out infinite;
 }
@@ -396,16 +396,16 @@ body {
   0%, 100% {
     box-shadow:
       0 0 60px rgba(204, 255, 0, 0.15),
-      0 0 120px rgba(255, 138, 92, 0.1),
+      0 0 120px rgba(204, 255, 0, 0.1),
       inset 0 0 60px rgba(204, 255, 0, 0.04);
     border-color: rgba(204, 255, 0, 0.5);
   }
   50% {
     box-shadow:
       0 0 80px rgba(204, 255, 0, 0.25),
-      0 0 160px rgba(255, 138, 92, 0.18),
+      0 0 160px rgba(204, 255, 0, 0.18),
       inset 0 0 80px rgba(204, 255, 0, 0.07);
-    border-color: rgba(255, 138, 92, 0.6);
+    border-color: rgba(204, 255, 0, 0.6);
   }
 }
 

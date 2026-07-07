@@ -13,7 +13,7 @@ export default function Card({ card, isSelected, onClick, onDelete }: CardProps)
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       inbox: '#ccff00',
-      'in-progress': '#ff8a5c',
+      'in-progress': '#ccff00',
       done: '#10b981',
       archived: '#6b7280',
     }
