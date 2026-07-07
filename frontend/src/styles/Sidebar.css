@@ -70,7 +70,10 @@
 }
 
 .nav-item.active {
-  background: linear-gradient(90deg, rgba(198, 255, 74, 0.12), rgba(198, 255, 74, 0.03));
+  background-image:
+    radial-gradient(rgba(198, 255, 74, 0.08) 0.6px, transparent 0.6px),
+    linear-gradient(90deg, rgba(198, 255, 74, 0.12), rgba(198, 255, 74, 0.03));
+  background-size: 5px 5px, 100% 100%;
   color: var(--accent);
   border-color: rgba(198, 255, 74, 0.15);
   box-shadow: 0 0 20px rgba(198, 255, 74, 0.06), inset 0 0 16px rgba(198, 255, 74, 0.04);

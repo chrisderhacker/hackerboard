@@ -122,16 +122,16 @@
   pointer-events: none;
   background: linear-gradient(135deg, rgba(198, 255, 74, 0.8), rgba(74, 194, 255, 0.8));
   -webkit-mask-image:
-    radial-gradient(circle, black 1px, transparent 1.6px),
+    radial-gradient(circle, black 0.6px, transparent 1px),
     radial-gradient(ellipse at 50% 50%, transparent 60%, black 75%, black 86%, transparent 97%);
-  -webkit-mask-size: 4px 4px, 100% 100%;
+  -webkit-mask-size: 3px 3px, 100% 100%;
   -webkit-mask-composite: source-in;
   mask-image:
-    radial-gradient(circle, black 1px, transparent 1.6px),
+    radial-gradient(circle, black 0.6px, transparent 1px),
     radial-gradient(ellipse at 50% 50%, transparent 60%, black 75%, black 86%, transparent 97%);
-  mask-size: 4px 4px, 100% 100%;
+  mask-size: 3px 3px, 100% 100%;
   mask-composite: intersect;
-  opacity: 0.3;
+  opacity: 0.16;
 }
 
 .inspector-form {
