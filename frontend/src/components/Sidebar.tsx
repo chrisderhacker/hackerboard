@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   InboxIcon,
   ZapIcon,
@@ -28,6 +29,8 @@ export const sections = [
 ]
 
 export default function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
+  const [pinged, setPinged] = useState<string | null>(null)
+
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
@@ -41,10 +44,16 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
         {sections.map(({ id, label, Icon }) => (
           <button
             key={id}
-            className={`nav-item ${activeSection === id ? 'active' : ''}`}
-            onClick={() => onSectionChange(id)}
+            className={`nav-item ${activeSection === id ? 'active' : ''} ${pinged === id ? 'pinging' : ''}`}
+            onClick={() => {
+              setPinged(id)
+              onSectionChange(id)
+            }}
           >
-            <span className="nav-icon">
+            <span
+              className="nav-icon"
+              onAnimationEnd={() => setPinged((cur) => (cur === id ? null : cur))}
+            >
               <Icon size={17} />
             </span>
             <span className="nav-label">{label}</span>

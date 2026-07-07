@@ -134,11 +134,12 @@
   box-shadow: 0 0 16px rgba(239, 68, 68, 0.25);
 }
 
-/* Halftone dot halo around the card edge — Huly style */
+/* Halftone dots along the inner edge — contained inside the card */
 .card-halo {
   position: absolute;
-  inset: -18px;
-  z-index: -1;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
   pointer-events: none;
   background: linear-gradient(
     135deg,
@@ -147,13 +148,13 @@
     rgba(74, 194, 255, 0.95)
   );
   -webkit-mask-image:
-    radial-gradient(circle, black 0.6px, transparent 1px),
-    radial-gradient(ellipse at 50% 50%, transparent 63%, black 76%, black 86%, transparent 97%);
+    radial-gradient(circle, black 0.5px, transparent 0.9px),
+    radial-gradient(ellipse at 50% 50%, transparent 60%, black 88%, transparent 100%);
   -webkit-mask-size: 3px 3px, 100% 100%;
   -webkit-mask-composite: source-in;
   mask-image:
-    radial-gradient(circle, black 0.6px, transparent 1px),
-    radial-gradient(ellipse at 50% 50%, transparent 63%, black 76%, black 86%, transparent 97%);
+    radial-gradient(circle, black 0.5px, transparent 0.9px),
+    radial-gradient(ellipse at 50% 50%, transparent 60%, black 88%, transparent 100%);
   mask-size: 3px 3px, 100% 100%;
   mask-composite: intersect;
   opacity: 0;
@@ -161,11 +162,11 @@
 }
 
 .card:hover .card-halo {
-  opacity: 0.2;
+  opacity: 0.22;
 }
 
 .card.selected .card-halo {
-  opacity: 0.3;
+  opacity: 0.32;
 }
 
 .card-thumbnail {

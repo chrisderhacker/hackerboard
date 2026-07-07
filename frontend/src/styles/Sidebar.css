@@ -70,13 +70,29 @@
 }
 
 .nav-item.active {
-  background-image:
-    radial-gradient(rgba(198, 255, 74, 0.08) 0.6px, transparent 0.6px),
-    linear-gradient(90deg, rgba(198, 255, 74, 0.12), rgba(198, 255, 74, 0.03));
-  background-size: 5px 5px, 100% 100%;
+  background: linear-gradient(90deg, rgba(198, 255, 74, 0.1), rgba(198, 255, 74, 0.02));
   color: var(--accent);
   border-color: rgba(198, 255, 74, 0.15);
   box-shadow: 0 0 20px rgba(198, 255, 74, 0.06), inset 0 0 16px rgba(198, 255, 74, 0.04);
+}
+
+/* Fine dot texture that fades out toward the right */
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--accent);
+  -webkit-mask:
+    radial-gradient(circle, black 0.5px, transparent 0.9px) 0 0 / 3.5px 3.5px,
+    linear-gradient(90deg, black, transparent 68%);
+  -webkit-mask-composite: source-in;
+  mask:
+    radial-gradient(circle, black 0.5px, transparent 0.9px) 0 0 / 3.5px 3.5px,
+    linear-gradient(90deg, black, transparent 68%);
+  mask-composite: intersect;
+  opacity: 0.22;
 }
 
 .nav-item.active::before {
@@ -107,6 +123,26 @@
 .nav-item.active .nav-icon {
   opacity: 1;
   filter: drop-shadow(0 0 6px rgba(198, 255, 74, 0.4));
+}
+
+/* Pop animation when a nav item is clicked */
+.nav-item.pinging .nav-icon {
+  animation: icon-pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes icon-pop {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  30% {
+    transform: scale(0.78) rotate(-8deg);
+  }
+  65% {
+    transform: scale(1.18) rotate(5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 .nav-label {
