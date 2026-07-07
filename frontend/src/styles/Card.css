@@ -27,17 +27,17 @@
 .card::before {
   content: '';
   position: absolute;
-  inset: -1px;
+  inset: -2px;
   border-radius: inherit;
-  padding: 1px;
+  padding: 2.5px;
   background: conic-gradient(
     from var(--glow-angle, 0deg),
     transparent 0%,
-    var(--accent) 12%,
-    transparent 28%,
-    transparent 50%,
-    var(--blue) 62%,
-    transparent 78%
+    var(--accent) 14%,
+    transparent 34%,
+    transparent 48%,
+    var(--blue) 64%,
+    transparent 84%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -47,6 +47,7 @@
   animation: glow-rotate 4s linear infinite paused;
   pointer-events: none;
   z-index: 1;
+  filter: drop-shadow(0 0 6px rgba(198, 255, 74, 0.45)) drop-shadow(0 0 8px rgba(74, 194, 255, 0.35));
 }
 
 @property --glow-angle {
@@ -65,8 +66,8 @@
   transform: translateY(-4px);
   box-shadow:
     0 12px 32px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(198, 255, 74, 0.07),
-    0 0 60px rgba(74, 194, 255, 0.05);
+    0 0 60px rgba(198, 255, 74, 0.12),
+    0 0 90px rgba(74, 194, 255, 0.09);
 }
 
 .card:hover::before {
@@ -81,7 +82,8 @@
 .card.selected {
   box-shadow:
     0 12px 32px rgba(0, 0, 0, 0.5),
-    0 0 44px rgba(198, 255, 74, 0.12);
+    0 0 60px rgba(198, 255, 74, 0.18),
+    0 0 100px rgba(74, 194, 255, 0.1);
 }
 
 .card.selected::before {
