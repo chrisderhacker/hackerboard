@@ -12,8 +12,9 @@ build/
 *.swo
 .next/
 out/
-prisma/*.db
-prisma/*.db-journal
+**/prisma/*.db
+**/prisma/*.db-journal
 .turbo/
 coverage/
 .env.production.local
+data/
