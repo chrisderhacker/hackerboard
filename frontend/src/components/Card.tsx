@@ -33,6 +33,7 @@ export default function Card({ card, isSelected, onClick, onDelete }: CardProps)
       role="button"
       tabIndex={0}
     >
+      <span className="card-halo" aria-hidden="true" />
       <button
         className="card-delete-btn"
         title="Card löschen"
