@@ -127,9 +127,11 @@
 }
 
 .command-icon {
-  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-width: 1.4rem;
-  text-align: center;
+  opacity: 0.85;
 }
 
 .command-label {

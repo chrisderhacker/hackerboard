@@ -1,17 +1,8 @@
 import Card from './Card'
+import { UploadIcon } from './Icons'
 import '../styles/CardGrid.css'
 
-interface CardItem {
-  id: string
-  title: string
-  description?: string
-  thumbnail?: string
-  status: string
-  nextStep?: string
-  dueDate?: string
-  tags: string[]
-  files?: any[]
-}
+import type { Card as CardItem } from '../types'
 
 interface CardGridProps {
   cards: CardItem[]
@@ -23,9 +14,11 @@ export default function CardGrid({ cards, onSelectCard, selectedCardId }: CardGr
   if (cards.length === 0) {
     return (
       <div className="empty-state">
-        <div className="empty-icon">📭</div>
-        <div className="empty-text">No cards yet</div>
-        <div className="empty-hint">Create your first card with Cmd+N</div>
+        <div className="empty-icon">
+          <UploadIcon size={38} />
+        </div>
+        <div className="empty-text">Noch keine Cards hier</div>
+        <div className="empty-hint">Dateien einfach per Drag & Drop hierher ziehen</div>
       </div>
     )
   }

@@ -146,6 +146,77 @@ body {
   box-shadow: 0 0 24px rgba(198, 255, 74, 0.15), inset 0 0 12px rgba(198, 255, 74, 0.05);
 }
 
+/* Drag & drop overlay */
+.drop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(5, 6, 7, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: overlay-fade 0.2s ease-out;
+}
+
+@keyframes overlay-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 3.5rem 5rem;
+  border: 1.5px dashed rgba(198, 255, 74, 0.5);
+  border-radius: 20px;
+  background:
+    radial-gradient(ellipse 400px 220px at 50% 0%, rgba(198, 255, 74, 0.08), transparent 70%),
+    radial-gradient(ellipse 400px 220px at 50% 100%, rgba(74, 194, 255, 0.08), transparent 70%),
+    #121617;
+  box-shadow:
+    0 0 60px rgba(198, 255, 74, 0.15),
+    0 0 120px rgba(74, 194, 255, 0.1),
+    inset 0 0 60px rgba(198, 255, 74, 0.04);
+  animation: drop-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes drop-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 60px rgba(198, 255, 74, 0.15),
+      0 0 120px rgba(74, 194, 255, 0.1),
+      inset 0 0 60px rgba(198, 255, 74, 0.04);
+    border-color: rgba(198, 255, 74, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 80px rgba(198, 255, 74, 0.25),
+      0 0 160px rgba(74, 194, 255, 0.18),
+      inset 0 0 80px rgba(198, 255, 74, 0.07);
+    border-color: rgba(74, 194, 255, 0.6);
+  }
+}
+
+.drop-title {
+  font-size: 1.3rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  background: linear-gradient(100deg, var(--accent), var(--blue));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.drop-hint {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
 .loading {
   display: flex;
   align-items: center;

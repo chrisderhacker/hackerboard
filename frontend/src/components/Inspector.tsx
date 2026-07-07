@@ -1,21 +1,7 @@
 import { useState } from 'react'
+import { FileIcon, XIcon } from './Icons'
+import type { Card } from '../types'
 import '../styles/Inspector.css'
-
-interface Card {
-  id: string
-  title: string
-  description?: string
-  thumbnail?: string
-  status: string
-  nextStep?: string
-  dueDate?: string
-  tags: string[]
-  files?: any[]
-  links?: any[]
-  notes?: any[]
-  checklist?: any[]
-  activities?: any[]
-}
 
 interface InspectorProps {
   card: Card
@@ -53,7 +39,7 @@ export default function Inspector({ card, onClose, onUpdate }: InspectorProps) {
       <div className="inspector-header">
         <h2>Details</h2>
         <button className="close-btn" onClick={onClose}>
-          ✕
+          <XIcon size={15} />
         </button>
       </div>
 
@@ -141,7 +127,7 @@ export default function Inspector({ card, onClose, onUpdate }: InspectorProps) {
             <div className="files-list">
               {card.files.map((file: any) => (
                 <div key={file.id} className="file-item">
-                  <span className="file-icon">📄</span>
+                  <FileIcon size={15} className="file-icon" />
                   <span className="file-name">{file.name}</span>
                 </div>
               ))}

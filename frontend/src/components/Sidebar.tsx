@@ -1,3 +1,14 @@
+import {
+  InboxIcon,
+  ZapIcon,
+  BulbIcon,
+  FolderIcon,
+  FilmIcon,
+  CalendarIcon,
+  UsersIcon,
+  ArchiveIcon,
+  BoltLogo,
+} from './Icons'
 import '../styles/Sidebar.css'
 
 interface SidebarProps {
@@ -5,15 +16,15 @@ interface SidebarProps {
   onSectionChange: (section: string) => void
 }
 
-const sections = [
-  { id: 'inbox', label: 'Inbox', icon: '📥' },
-  { id: 'next-steps', label: "What's Next", icon: '⚡' },
-  { id: 'ideas', label: 'Ideas', icon: '💡' },
-  { id: 'projects', label: 'Projects', icon: '📊' },
-  { id: 'trailers', label: 'Trailers', icon: '🎬' },
-  { id: 'events', label: 'Events', icon: '📅' },
-  { id: 'clients', label: 'Clients', icon: '👥' },
-  { id: 'archive', label: 'Archive', icon: '📦' },
+export const sections = [
+  { id: 'inbox', label: 'Inbox', Icon: InboxIcon },
+  { id: 'next-steps', label: "What's Next", Icon: ZapIcon },
+  { id: 'ideas', label: 'Ideas', Icon: BulbIcon },
+  { id: 'projects', label: 'Projects', Icon: FolderIcon },
+  { id: 'trailers', label: 'Trailers', Icon: FilmIcon },
+  { id: 'events', label: 'Events', Icon: CalendarIcon },
+  { id: 'clients', label: 'Clients', Icon: UsersIcon },
+  { id: 'archive', label: 'Archive', Icon: ArchiveIcon },
 ]
 
 export default function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
@@ -21,20 +32,22 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
     <aside className="sidebar">
       <div className="sidebar-header">
         <div className="logo">
-          <span className="logo-icon">⚡</span>
+          <BoltLogo size={20} className="logo-icon" />
           <span className="logo-text">HackerBoard</span>
         </div>
       </div>
 
       <nav className="sidebar-nav">
-        {sections.map((section) => (
+        {sections.map(({ id, label, Icon }) => (
           <button
-            key={section.id}
-            className={`nav-item ${activeSection === section.id ? 'active' : ''}`}
-            onClick={() => onSectionChange(section.id)}
+            key={id}
+            className={`nav-item ${activeSection === id ? 'active' : ''}`}
+            onClick={() => onSectionChange(id)}
           >
-            <span className="nav-icon">{section.icon}</span>
-            <span className="nav-label">{section.label}</span>
+            <span className="nav-icon">
+              <Icon size={17} />
+            </span>
+            <span className="nav-label">{label}</span>
           </button>
         ))}
       </nav>

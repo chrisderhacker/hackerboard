@@ -1,3 +1,4 @@
+import { PaperclipIcon } from './Icons'
 import '../styles/Card.css'
 
 interface CardProps {
@@ -42,7 +43,14 @@ export default function Card({ card, isSelected, onClick }: CardProps) {
     >
       {card.thumbnail && (
         <div className="card-thumbnail">
-          <img src={card.thumbnail} alt={card.title} />
+          <img
+            src={card.thumbnail}
+            alt={card.title}
+            onError={(e) => {
+              const wrapper = e.currentTarget.parentElement
+              if (wrapper) wrapper.style.display = 'none'
+            }}
+          />
         </div>
       )}
 
@@ -54,7 +62,9 @@ export default function Card({ card, isSelected, onClick }: CardProps) {
               <span className="card-due-date">{formatDate(card.dueDate)}</span>
             )}
             {card.files && card.files.length > 0 && (
-              <span className="card-file-count">📎 {card.files.length}</span>
+              <span className="card-file-count">
+                <PaperclipIcon size={12} /> {card.files.length}
+              </span>
             )}
           </div>
         </div>

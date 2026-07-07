@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { SearchIcon } from './Icons'
+import { sections } from './Sidebar'
 import '../styles/CommandBar.css'
 
 interface CommandBarProps {
@@ -6,22 +8,11 @@ interface CommandBarProps {
   onSelect: (section: string) => void
 }
 
-const commands = [
-  { id: 'inbox', label: 'Inbox', icon: '📥' },
-  { id: 'next-steps', label: "What's Next", icon: '⚡' },
-  { id: 'ideas', label: 'Ideas', icon: '💡' },
-  { id: 'projects', label: 'Projects', icon: '📊' },
-  { id: 'trailers', label: 'Trailers', icon: '🎬' },
-  { id: 'events', label: 'Events', icon: '📅' },
-  { id: 'clients', label: 'Clients', icon: '👥' },
-  { id: 'archive', label: 'Archive', icon: '📦' },
-]
-
 export default function CommandBar({ onClose, onSelect }: CommandBarProps) {
   const [search, setSearch] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
 
-  const filtered = commands.filter((cmd) =>
+  const filtered = sections.filter((cmd) =>
     cmd.label.toLowerCase().includes(search.toLowerCase())
   )
 
@@ -51,7 +42,7 @@ export default function CommandBar({ onClose, onSelect }: CommandBarProps) {
     <div className="command-bar-overlay" onClick={onClose}>
       <div className="command-bar" onClick={(e) => e.stopPropagation()}>
         <div className="command-bar-input-wrapper">
-          <span className="search-icon">🔍</span>
+          <SearchIcon size={16} className="search-icon" />
           <input
             type="text"
             placeholder="Search or jump to..."
@@ -67,17 +58,17 @@ export default function CommandBar({ onClose, onSelect }: CommandBarProps) {
         </div>
 
         <div className="command-bar-results">
-          {filtered.map((cmd, index) => (
+          {filtered.map(({ id, label, Icon }, index) => (
             <button
-              key={cmd.id}
+              key={id}
               className={`command-item ${index === selectedIndex ? 'selected' : ''}`}
-              onClick={() => onSelect(cmd.id)}
+              onClick={() => onSelect(id)}
             >
-              <span className="command-icon">{cmd.icon}</span>
-              <span className="command-label">{cmd.label}</span>
-              <span className="command-hint">
-                {index === 0 && <span>↵</span>}
+              <span className="command-icon">
+                <Icon size={16} />
               </span>
+              <span className="command-label">{label}</span>
+              <span className="command-hint">{index === selectedIndex && <span>↵</span>}</span>
             </button>
           ))}
         </div>

@@ -1,26 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, DragEvent } from 'react'
+import { UploadIcon } from './components/Icons'
+import type { Card } from './types'
 import './App.css'
 import Sidebar from './components/Sidebar'
 import CommandBar from './components/CommandBar'
 import CardGrid from './components/CardGrid'
 import Inspector from './components/Inspector'
-
-interface Card {
-  id: string
-  title: string
-  description?: string
-  thumbnail?: string
-  status: string
-  nextStep?: string
-  dueDate?: string
-  section: string
-  tags: string[]
-  files?: any[]
-  links?: any[]
-  notes?: any[]
-  checklist?: any[]
-  activities?: any[]
-}
 
 const DEMO_CARDS: Card[] = [
   {
@@ -76,6 +61,8 @@ function App() {
   const [activeSection, setActiveSection] = useState('inbox')
   const [loading, setLoading] = useState(true)
   const [showCommandBar, setShowCommandBar] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
+  const dragDepth = useRef(0)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -109,8 +96,82 @@ function App() {
     }
   }
 
+  const createCardsFromFiles = async (files: FileList) => {
+    const newCards: Card[] = []
+    for (const file of Array.from(files)) {
+      const title = file.name.replace(/\.[^.]+$/, '')
+      const isImage = file.type.startsWith('image/')
+      let created: Card | null = null
+      try {
+        const response = await fetch('/api/cards', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, section: activeSection, status: 'inbox', tags: [] }),
+        })
+        if (!response.ok) throw new Error(`API ${response.status}`)
+        created = await response.json()
+      } catch {
+        created = {
+          id: `local-${crypto.randomUUID()}`,
+          title,
+          status: 'inbox',
+          section: activeSection,
+          tags: [],
+          thumbnail: isImage ? URL.createObjectURL(file) : undefined,
+          files: [{ id: `local-file-${file.name}`, name: file.name }],
+        }
+      }
+      if (created) newCards.push(created)
+    }
+    if (newCards.length) setCards((prev) => [...newCards, ...prev])
+  }
+
+  const handleDragEnter = (e: DragEvent) => {
+    e.preventDefault()
+    if (!e.dataTransfer.types.includes('Files')) return
+    dragDepth.current++
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e: DragEvent) => {
+    e.preventDefault()
+    dragDepth.current = Math.max(0, dragDepth.current - 1)
+    if (dragDepth.current === 0) setIsDragging(false)
+  }
+
+  const handleDragOver = (e: DragEvent) => {
+    e.preventDefault()
+  }
+
+  const handleDrop = (e: DragEvent) => {
+    e.preventDefault()
+    dragDepth.current = 0
+    setIsDragging(false)
+    if (e.dataTransfer.files.length) {
+      createCardsFromFiles(e.dataTransfer.files)
+    }
+  }
+
   return (
-    <div className="app">
+    <div
+      className="app"
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
+      {isDragging && (
+        <div className="drop-overlay">
+          <div className="drop-zone">
+            <UploadIcon size={40} />
+            <div className="drop-title">Drop it like it's hot</div>
+            <div className="drop-hint">
+              Dateien ablegen — landen in „{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}"
+            </div>
+          </div>
+        </div>
+      )}
+
       {showCommandBar && (
         <CommandBar
           onClose={() => setShowCommandBar(false)}
