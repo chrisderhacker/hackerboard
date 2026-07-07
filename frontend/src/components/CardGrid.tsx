@@ -7,10 +7,11 @@ import type { Card as CardItem } from '../types'
 interface CardGridProps {
   cards: CardItem[]
   onSelectCard: (card: CardItem) => void
+  onDeleteCard: (card: CardItem) => void
   selectedCardId?: string
 }
 
-export default function CardGrid({ cards, onSelectCard, selectedCardId }: CardGridProps) {
+export default function CardGrid({ cards, onSelectCard, onDeleteCard, selectedCardId }: CardGridProps) {
   if (cards.length === 0) {
     return (
       <div className="empty-state">
@@ -31,6 +32,7 @@ export default function CardGrid({ cards, onSelectCard, selectedCardId }: CardGr
           card={card}
           isSelected={card.id === selectedCardId}
           onClick={() => onSelectCard(card)}
+          onDelete={() => onDeleteCard(card)}
         />
       ))}
     </div>

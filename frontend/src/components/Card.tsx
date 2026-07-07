@@ -1,23 +1,15 @@
-import { PaperclipIcon } from './Icons'
+import { PaperclipIcon, TrashIcon } from './Icons'
+import type { Card as CardData } from '../types'
 import '../styles/Card.css'
 
 interface CardProps {
-  card: {
-    id: string
-    title: string
-    description?: string
-    thumbnail?: string
-    status: string
-    nextStep?: string
-    dueDate?: string
-    tags: string[]
-    files?: any[]
-  }
+  card: CardData
   isSelected: boolean
   onClick: () => void
+  onDelete: () => void
 }
 
-export default function Card({ card, isSelected, onClick }: CardProps) {
+export default function Card({ card, isSelected, onClick, onDelete }: CardProps) {
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       inbox: '#bfff00',
@@ -41,6 +33,17 @@ export default function Card({ card, isSelected, onClick }: CardProps) {
       role="button"
       tabIndex={0}
     >
+      <button
+        className="card-delete-btn"
+        title="Card löschen"
+        onClick={(e) => {
+          e.stopPropagation()
+          onDelete()
+        }}
+      >
+        <TrashIcon size={14} />
+      </button>
+
       {card.thumbnail && (
         <div className="card-thumbnail">
           <img

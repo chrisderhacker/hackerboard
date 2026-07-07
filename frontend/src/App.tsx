@@ -77,6 +77,20 @@ function App() {
     if (newCards.length) setCards((prev) => [...newCards, ...prev])
   }
 
+  const deleteCard = async (card: Card) => {
+    if (!window.confirm(`„${card.title}" wirklich löschen? Das kann nicht rückgängig gemacht werden.`)) {
+      return
+    }
+    try {
+      const response = await fetch(`/api/cards/${card.id}`, { method: 'DELETE' })
+      if (!response.ok) throw new Error(`API ${response.status}`)
+      if (selectedCard?.id === card.id) setSelectedCard(null)
+      setCards((prev) => prev.filter((c) => c.id !== card.id))
+    } catch (error) {
+      console.error('Löschen fehlgeschlagen:', error)
+    }
+  }
+
   const createEmptyCard = async () => {
     try {
       const response = await fetch('/api/cards', {
@@ -174,6 +188,7 @@ function App() {
             <CardGrid
               cards={cards}
               onSelectCard={setSelectedCard}
+              onDeleteCard={deleteCard}
               selectedCardId={selectedCard?.id}
             />
           )}

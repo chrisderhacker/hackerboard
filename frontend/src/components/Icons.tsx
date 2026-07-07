@@ -194,6 +194,21 @@ export function UploadIcon(p: IconProps) {
   )
 }
 
+
+export function TrashIcon(p: IconProps) {
+  return (
+    <GradientIcon {...p}>
+      {(g) => (
+        <>
+          <path d="M4 6.5h16M9.5 6.5V4.8A1.3 1.3 0 0 1 10.8 3.5h2.4a1.3 1.3 0 0 1 1.3 1.3v1.7" {...strokeProps(g)} />
+          <path d="M6 6.5 6.8 19a1.8 1.8 0 0 0 1.8 1.7h6.8a1.8 1.8 0 0 0 1.8-1.7L18 6.5" {...strokeProps(g)} />
+          <path d="M10 10.5v6M14 10.5v6" {...strokeProps(g)} />
+        </>
+      )}
+    </GradientIcon>
+  )
+}
+
 export function BoltLogo(p: IconProps) {
   return (
     <GradientIcon {...p}>
