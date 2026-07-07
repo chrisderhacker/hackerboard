@@ -33,7 +33,7 @@
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  background: linear-gradient(100deg, var(--text-primary), var(--accent));
+  background: linear-gradient(100deg, var(--text-primary), var(--accent) 65%, var(--blue));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

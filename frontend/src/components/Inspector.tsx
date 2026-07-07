@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { FileIcon, XIcon } from './Icons'
+import { FileIcon, XIcon, ExpandIcon } from './Icons'
 import { sections } from './Sidebar'
+import Lightbox from './Lightbox'
 import type { Card } from '../types'
 import '../styles/Inspector.css'
 
@@ -19,6 +20,7 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
   const [section, setSection] = useState(card.section)
   const [dueDate, setDueDate] = useState(card.dueDate?.split('T')[0] || '')
   const [saving, setSaving] = useState(false)
+  const [zoomed, setZoomed] = useState(false)
 
   // Sync form when a different card is selected
   useEffect(() => {
@@ -93,8 +95,11 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
 
       <div className="inspector-content">
         {card.thumbnail && (
-          <div className="inspector-preview">
+          <div className="inspector-preview" onClick={() => setZoomed(true)}>
             <img src={card.thumbnail} alt={card.title} />
+            <span className="zoom-hint">
+              <ExpandIcon size={12} /> Vergrößern
+            </span>
           </div>
         )}
 
@@ -229,6 +234,10 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
           </button>
         </div>
       </div>
+
+      {zoomed && card.thumbnail && (
+        <Lightbox src={card.thumbnail} alt={card.title} onClose={() => setZoomed(false)} />
+      )}
     </div>
   )
 }

@@ -209,6 +209,16 @@ export function TrashIcon(p: IconProps) {
   )
 }
 
+export function ExpandIcon(p: IconProps) {
+  return (
+    <GradientIcon {...p}>
+      {(g) => (
+        <path d="M14.5 4H20v5.5M9.5 20H4v-5.5M20 4l-6.8 6.8M4 20l6.8-6.8" {...strokeProps(g)} />
+      )}
+    </GradientIcon>
+  )
+}
+
 export function BoltLogo(p: IconProps) {
   return (
     <GradientIcon {...p}>

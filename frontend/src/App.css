@@ -233,7 +233,7 @@ body {
   font-weight: 650;
   letter-spacing: -0.02em;
   text-transform: capitalize;
-  background: linear-gradient(120deg, var(--text-primary) 60%, rgba(204, 255, 0, 0.85));
+  background: linear-gradient(115deg, var(--text-primary) 45%, var(--accent) 78%, var(--blue));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -259,9 +259,9 @@ body {
 
 .filter-chip:hover {
   color: var(--text-primary);
-  border-color: var(--border-strong);
+  border-color: rgba(255, 138, 92, 0.35);
   background: var(--glass-strong);
-  box-shadow: 0 0 20px rgba(204, 255, 0, 0.08);
+  box-shadow: 0 0 20px rgba(255, 138, 92, 0.1);
   transform: translateY(-1px);
 }
 
