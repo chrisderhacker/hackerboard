@@ -141,6 +141,13 @@ function App() {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
+      <div className="ambient" aria-hidden="true">
+        <div className="ambient-beam" />
+        <div className="ambient-glow ambient-glow-1" />
+        <div className="ambient-glow ambient-glow-2" />
+        <div className="ambient-glow ambient-glow-3" />
+      </div>
+
       {isDragging && (
         <div className="drop-overlay">
           <div className="drop-zone">
