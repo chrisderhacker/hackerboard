@@ -53,15 +53,15 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Ambient scene glow — lime top-left, blue bottom-right */
+/* Ambient scene glow — cool silver-blue with a hint of lime */
 .app {
   display: flex;
   height: 100vh;
   position: relative;
   background:
-    radial-gradient(ellipse 800px 500px at -5% -10%, rgba(198, 255, 74, 0.06), transparent 60%),
-    radial-gradient(ellipse 900px 600px at 105% 110%, rgba(74, 194, 255, 0.07), transparent 60%),
-    radial-gradient(ellipse 600px 400px at 60% -20%, rgba(255, 255, 255, 0.03), transparent 60%),
+    radial-gradient(ellipse 800px 500px at -5% -10%, rgba(170, 200, 235, 0.07), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 105% 110%, rgba(74, 160, 235, 0.08), transparent 60%),
+    radial-gradient(ellipse 600px 400px at 60% -20%, rgba(220, 232, 250, 0.04), transparent 60%),
     var(--bg-base);
   overflow: hidden;
 }
@@ -85,9 +85,9 @@ body {
   z-index: 50;
   pointer-events: none;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
-  background-size: 140px 140px;
+  background-size: 130px 130px;
   mix-blend-mode: overlay;
-  opacity: 0.055;
+  opacity: 0.09;
 }
 
 /* Animated ambient background — drifting aurora + breathing light beam */
@@ -108,49 +108,68 @@ body {
 }
 
 .ambient-glow-1 {
-  width: 620px;
-  height: 620px;
+  width: 640px;
+  height: 640px;
   top: -220px;
   left: -160px;
-  background: radial-gradient(circle, rgba(198, 255, 74, 0.16), transparent 70%);
+  background: radial-gradient(circle, rgba(170, 200, 235, 0.2), transparent 70%);
   animation: drift-1 30s ease-in-out infinite;
 }
 
 .ambient-glow-2 {
-  width: 720px;
-  height: 720px;
+  width: 760px;
+  height: 760px;
   bottom: -280px;
   right: -200px;
-  background: radial-gradient(circle, rgba(74, 194, 255, 0.15), transparent 70%);
+  background: radial-gradient(circle, rgba(74, 160, 235, 0.2), transparent 70%);
   animation: drift-2 38s ease-in-out infinite;
 }
 
 .ambient-glow-3 {
-  width: 460px;
-  height: 460px;
+  width: 480px;
+  height: 480px;
   top: 35%;
   left: 45%;
-  background: radial-gradient(circle, rgba(120, 210, 190, 0.08), transparent 70%);
+  background: radial-gradient(circle, rgba(190, 235, 120, 0.05), transparent 70%);
   animation: drift-3 44s ease-in-out infinite;
 }
 
-/* Huly-style soft light column */
+/* Cool silver-blue light columns — reference style */
 .ambient-beam {
   position: absolute;
-  top: -15%;
-  left: 52%;
-  width: 420px;
-  height: 130%;
+  top: -20%;
+  left: 44%;
+  width: 480px;
+  height: 140%;
   background: linear-gradient(
     180deg,
     transparent,
-    rgba(120, 200, 255, 0.09),
-    rgba(198, 255, 74, 0.05) 60%,
+    rgba(205, 224, 248, 0.22),
+    rgba(150, 185, 225, 0.14) 55%,
+    rgba(198, 255, 74, 0.05) 80%,
     transparent
   );
-  filter: blur(70px);
-  transform: rotate(9deg);
-  animation: beam-breathe 18s ease-in-out infinite;
+  filter: blur(58px);
+  transform: rotate(14deg);
+  animation: beam-breathe 16s ease-in-out infinite;
+}
+
+/* Second, thinner silver streak for depth */
+.ambient-beam::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -180px;
+  width: 200px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(220, 232, 250, 0.14),
+    transparent 70%
+  );
+  filter: blur(40px);
+  transform: rotate(-4deg);
 }
 
 @keyframes drift-1 {
@@ -169,8 +188,8 @@ body {
 }
 
 @keyframes beam-breathe {
-  0%, 100% { opacity: 0.5; transform: rotate(9deg) scaleX(1); }
-  50% { opacity: 0.9; transform: rotate(7deg) scaleX(1.15); }
+  0%, 100% { opacity: 0.7; transform: rotate(14deg) scaleX(1); }
+  50% { opacity: 1; transform: rotate(11deg) scaleX(1.18); }
 }
 
 @media (prefers-reduced-motion: reduce) {
