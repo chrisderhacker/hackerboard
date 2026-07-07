@@ -22,6 +22,54 @@ interface Card {
   activities?: any[]
 }
 
+const DEMO_CARDS: Card[] = [
+  {
+    id: 'demo-1',
+    title: 'Trailer-Konzept "Neon Nights"',
+    description: 'Erster Rohschnitt steht. Sounddesign fehlt noch, Farblook geht Richtung Cyberpunk mit warmen Kontrasten.',
+    thumbnail: 'https://picsum.photos/seed/neon/400/240',
+    status: 'in-progress',
+    nextStep: 'Sounddesign-Briefing schreiben',
+    dueDate: '2026-07-15',
+    section: 'inbox',
+    tags: ['trailer', 'cut', 'sound'],
+    files: [{ id: 'f1' }, { id: 'f2' }, { id: 'f3' }],
+  },
+  {
+    id: 'demo-2',
+    title: 'Event-Recap Sommerfest',
+    description: 'Footage von 3 Kameras gesichtet. Die Drohnenaufnahmen vom Einlass sind stark.',
+    thumbnail: 'https://picsum.photos/seed/event/400/240',
+    status: 'inbox',
+    nextStep: 'Best-of Selects markieren',
+    dueDate: '2026-07-10',
+    section: 'inbox',
+    tags: ['event', 'recap'],
+    files: [{ id: 'f4' }],
+  },
+  {
+    id: 'demo-3',
+    title: 'Idee: Vertikale Serie für Clients',
+    description: 'Kurzformat 30-60s, ein Take, roher Look. Könnte als Abo-Paket verkauft werden.',
+    status: 'inbox',
+    nextStep: 'Pilotfolge skizzieren',
+    section: 'inbox',
+    tags: ['idea', 'social', 'business'],
+  },
+  {
+    id: 'demo-4',
+    title: 'Client-Pitch happyendings.at',
+    description: 'Moodboard und Referenzen zusammenstellen für das Kennenlern-Meeting.',
+    thumbnail: 'https://picsum.photos/seed/pitch/400/240',
+    status: 'in-progress',
+    nextStep: 'Moodboard finalisieren',
+    dueDate: '2026-07-09',
+    section: 'inbox',
+    tags: ['client', 'pitch'],
+    files: [{ id: 'f5' }, { id: 'f6' }],
+  },
+]
+
 function App() {
   const [cards, setCards] = useState<Card[]>([])
   const [selectedCard, setSelectedCard] = useState<Card | null>(null)
@@ -49,11 +97,13 @@ function App() {
     try {
       setLoading(true)
       const response = await fetch(`/api/cards`)
+      if (!response.ok) throw new Error(`API ${response.status}`)
       const data = await response.json()
       const filtered = data.filter((card: Card) => card.section === activeSection)
       setCards(filtered)
     } catch (error) {
-      console.error('Failed to fetch cards:', error)
+      console.warn('API not reachable, showing demo cards:', error)
+      setCards(DEMO_CARDS.filter((card) => card.section === activeSection))
     } finally {
       setLoading(false)
     }

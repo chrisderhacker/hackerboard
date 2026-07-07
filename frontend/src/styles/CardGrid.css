@@ -1,8 +1,8 @@
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1rem;
-  animation: fadeIn 0.3s ease-out;
+  gap: 1.1rem;
+  animation: grid-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (max-width: 1400px) {
@@ -21,7 +21,7 @@
 @media (max-width: 600px) {
   .card-grid {
     grid-template-columns: 1fr;
-    gap: 0.5rem;
+    gap: 0.6rem;
   }
 }
 
@@ -30,31 +30,52 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 300px;
-  color: var(--text-secondary);
-  gap: 1rem;
+  min-height: 340px;
+  gap: 0.9rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(ellipse 400px 200px at 50% 0%, rgba(198, 255, 74, 0.04), transparent 70%),
+    var(--glass);
+  position: relative;
+  overflow: hidden;
+}
+
+.empty-state::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20%;
+  right: 20%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-glow), var(--blue-glow), transparent);
 }
 
 .empty-icon {
-  font-size: 4rem;
-  opacity: 0.5;
+  font-size: 2.6rem;
+  opacity: 0.6;
+  filter: drop-shadow(0 0 20px rgba(198, 255, 74, 0.2));
 }
 
 .empty-text {
-  font-size: 1.125rem;
-  font-weight: 500;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .empty-hint {
-  font-size: 0.875rem;
-  opacity: 0.6;
+  font-size: 0.83rem;
+  color: var(--text-muted);
 }
 
-@keyframes fadeIn {
+@keyframes grid-in {
   from {
     opacity: 0;
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
