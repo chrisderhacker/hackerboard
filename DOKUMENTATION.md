@@ -14,6 +14,7 @@ Ein **kreatives Command-Center / Ideen-Board** (Huly-inspiriert). Premium-Dark-U
 - **Command Bar** (Cmd/Ctrl+K) zum Springen
 - **Daily Spark** als Startbereich: dichter, täglich neu mischbarer Mosaik-Mix aus Ideen, Bildern, Projekten und anstehenden Aufgaben
 - **Fortschritt & Reward**: Erledigt-Zähler für heute/Woche, offene Aufgaben sowie visueller XP-Reward mit kurzem Sound
+- **Erledigt-Workflow**: Erledigte Karten wechseln automatisch ins Archive und können dort über den reduzierten Inspector wieder in die Inbox zurückgeholt werden.
 - **Inspiration Feed**: animierte Kachel aus vorhandenen Bild-Cards; eine externe Midjourney-Anbindung benötigt später eine zulässige, stabile Datenquelle
 - **Inspector** (rechte Spalte): Vorschau, Beschreibung, Next Step, Datum, Dateien, Links, Notizen, Checkliste, Activity
 - **Drag & Drop Upload** — Dateien reinziehen → werden zu Cards (Bild-Thumbnail), Dateien landen auf dem Server

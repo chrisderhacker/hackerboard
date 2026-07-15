@@ -6,6 +6,7 @@ interface DailySparkProps {
   cards: Card[]
   onSelectCard: (card: Card) => void
   onCardCompleted: (card: Card) => void
+  selectedCardId?: string
 }
 
 const tileShapes = ['feature', 'wide', 'portrait', 'standard', 'standard', 'wide']
@@ -45,12 +46,12 @@ function isWithinDays(value: string | undefined, days: number) {
   return Date.now() - new Date(value).getTime() <= days * 86_400_000
 }
 
-export default function DailySpark({ cards, onSelectCard, onCardCompleted }: DailySparkProps) {
+export default function DailySpark({ cards, onSelectCard, onCardCompleted, selectedCardId }: DailySparkProps) {
   const [shuffleSeed, setShuffleSeed] = useState(0)
   const [reward, setReward] = useState<string | null>(null)
 
   const visibleCards = useMemo(() => {
-    const ranked = [...cards].sort((a, b) => {
+    const ranked = cards.filter((card) => card.section !== 'archive' && card.status !== 'done' && card.status !== 'archived').sort((a, b) => {
       const aDue = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER
       const bDue = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER
       return aDue - bDue || (b.updatedAt || '').localeCompare(a.updatedAt || '')
@@ -74,7 +75,7 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted }: Dai
     const response = await fetch(`/api/cards/${card.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'done' }),
+      body: JSON.stringify({ status: 'done', section: 'archive' }),
     })
     if (!response.ok) return
     const updated = await response.json()
@@ -98,7 +99,7 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted }: Dai
         {visibleCards.map((card, index) => (
           <article
             key={card.id}
-            className={`spark-tile ${tileShapes[index % tileShapes.length]} poster-${index % 6} ${card.status === 'done' ? 'is-done' : ''}`}
+            className={`spark-tile ${tileShapes[index % tileShapes.length]} poster-${index % 6} ${card.id === selectedCardId ? 'selected' : ''}`}
             onClick={() => onSelectCard(card)}
           >
             <span className="spark-dot-halo" aria-hidden="true" />

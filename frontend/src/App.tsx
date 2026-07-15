@@ -204,6 +204,7 @@ function App() {
               <DailySpark
                 cards={cards}
                 onSelectCard={setSelectedCard}
+                selectedCardId={selectedCard?.id}
                 onCardCompleted={(updated) => {
                   setCards((current) => current.map((card) => card.id === updated.id ? updated : card))
                 }}
@@ -224,7 +225,7 @@ function App() {
             card={selectedCard}
             onClose={() => setSelectedCard(null)}
             onUpdate={(updated) => {
-              if (activeSection !== 'daily-spark' && updated.section !== activeSection) {
+              if ((activeSection === 'daily-spark' && updated.section === 'archive') || (activeSection !== 'daily-spark' && updated.section !== activeSection)) {
                 setSelectedCard(null)
               } else {
                 setSelectedCard(updated)

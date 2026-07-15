@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { FileIcon, XIcon, ExpandIcon } from './Icons'
-import { sections } from './Sidebar'
 import Lightbox from './Lightbox'
 import type { Card } from '../types'
 import '../styles/Inspector.css'
@@ -16,40 +15,33 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
   const [title, setTitle] = useState(card.title)
   const [description, setDescription] = useState(card.description || '')
   const [nextStep, setNextStep] = useState(card.nextStep || '')
-  const [status, setStatus] = useState(card.status)
-  const [section, setSection] = useState(card.section)
   const [dueDate, setDueDate] = useState(card.dueDate?.split('T')[0] || '')
   const [saving, setSaving] = useState(false)
   const [zoomed, setZoomed] = useState(false)
+  const isArchived = card.section === 'archive' || card.status === 'archived' || card.status === 'done'
 
-  // Sync form when a different card is selected
   useEffect(() => {
     setTitle(card.title)
     setDescription(card.description || '')
     setNextStep(card.nextStep || '')
-    setStatus(card.status)
-    setSection(card.section)
     setDueDate(card.dueDate?.split('T')[0] || '')
   }, [card.id])
+
+  const patchCard = async (data: Record<string, unknown>) => {
+    const response = await fetch(`/api/cards/${card.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) throw new Error(`API ${response.status}`)
+    const updated = await response.json()
+    onUpdate(updated)
+  }
 
   const handleSave = async () => {
     try {
       setSaving(true)
-      const response = await fetch(`/api/cards/${card.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title,
-          description,
-          nextStep,
-          status,
-          section,
-          dueDate: dueDate || null,
-        }),
-      })
-      if (!response.ok) throw new Error(`API ${response.status}`)
-      const updated = await response.json()
-      onUpdate(updated)
+      await patchCard({ title, description, nextStep, dueDate: dueDate || null })
     } catch (error) {
       console.error('Failed to update card:', error)
     } finally {
@@ -59,22 +51,22 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
 
   const handleArchive = async () => {
     try {
-      const response = await fetch(`/api/cards/${card.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ section: 'archive', status: 'archived' }),
-      })
-      if (!response.ok) throw new Error(`API ${response.status}`)
-      onUpdate(await response.json())
+      await patchCard({ section: 'archive', status: 'done' })
     } catch (error) {
       console.error('Failed to archive card:', error)
     }
   }
 
-  const handleDelete = async () => {
-    if (!window.confirm(`„${card.title}" wirklich löschen? Das kann nicht rückgängig gemacht werden.`)) {
-      return
+  const handleRestore = async () => {
+    try {
+      await patchCard({ section: 'inbox', status: 'inbox' })
+    } catch (error) {
+      console.error('Failed to restore card:', error)
     }
+  }
+
+  const handleDelete = async () => {
+    if (!window.confirm(`„${card.title}" wirklich löschen? Das kann nicht rückgängig gemacht werden.`)) return
     try {
       const response = await fetch(`/api/cards/${card.id}`, { method: 'DELETE' })
       if (!response.ok) throw new Error(`API ${response.status}`)
@@ -85,159 +77,58 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
   }
 
   return (
-    <div className="inspector">
+    <aside className="inspector">
       <div className="inspector-header">
-        <h2>Details</h2>
-        <button className="close-btn" onClick={onClose}>
-          <XIcon size={15} />
-        </button>
+        <span className="inspector-kicker">KARTE</span>
+        <button className="close-btn" onClick={onClose} aria-label="Details schließen"><XIcon size={15} /></button>
       </div>
 
       <div className="inspector-content">
         {card.thumbnail && (
-          <div className="inspector-preview" onClick={() => setZoomed(true)}>
+          <button className="inspector-preview" onClick={() => setZoomed(true)}>
             <img src={card.thumbnail} alt={card.title} />
-            <span className="zoom-hint">
-              <ExpandIcon size={12} /> Vergrößern
-            </span>
-          </div>
+            <span className="zoom-hint"><ExpandIcon size={12} /> Vergrößern</span>
+          </button>
         )}
 
-        <div className="inspector-form">
-          <div className="form-group">
-            <label>Title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Card title..."
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Description</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Add description..."
-              rows={4}
-            />
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Status</label>
-              <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                <option value="inbox">Inbox</option>
-                <option value="in-progress">In Progress</option>
-                <option value="done">Done</option>
-                <option value="archived">Archived</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Section</label>
-              <select value={section} onChange={(e) => setSection(e.target.value)}>
-                {sections.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label>Next Step</label>
-            <input
-              type="text"
-              value={nextStep}
-              onChange={(e) => setNextStep(e.target.value)}
-              placeholder="What's the next action?"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Due Date</label>
-            <input
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-            />
+        <div className="inspector-editor">
+          <textarea className="inspector-title" value={title} onChange={(event) => setTitle(event.target.value)} rows={2} aria-label="Titel" />
+          <textarea className="inspector-description" value={description} onChange={(event) => setDescription(event.target.value)} rows={3} placeholder="Kurze Notiz …" aria-label="Beschreibung" />
+          <div className="inspector-next">
+            <span>NÄCHSTER SCHRITT</span>
+            <input value={nextStep} onChange={(event) => setNextStep(event.target.value)} placeholder="Was ist der nächste Move?" />
           </div>
         </div>
 
-        {card.checklist && card.checklist.length > 0 && (
-          <div className="inspector-section">
-            <h3>Checklist</h3>
-            <div className="checklist">
-              {card.checklist.map((item) => (
-                <div key={item.id} className="checklist-item">
-                  <input type="checkbox" defaultChecked={item.completed} disabled />
-                  <span>{item.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <details className="inspector-more">
+          <summary>Mehr Details <span>＋</span></summary>
+          <div className="compact-field"><label>Fällig</label><input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} /></div>
+          <div className="compact-meta"><span>STATUS</span><strong>{card.status}</strong><span>BEREICH</span><strong>{card.section}</strong></div>
+          {card.checklist && card.checklist.length > 0 && <div className="compact-list">{card.checklist.map(item => <label key={item.id}><input type="checkbox" checked={item.completed} readOnly /> {item.text}</label>)}</div>}
+        </details>
 
         {card.files && card.files.length > 0 && (
-          <div className="inspector-section">
-            <h3>Files ({card.files.length})</h3>
-            <div className="files-list">
-              {card.files.map((file) => (
-                <a
-                  key={file.id}
-                  className="file-item"
-                  href={file.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <FileIcon size={15} className="file-icon" />
-                  <span className="file-name">{file.name}</span>
-                </a>
-              ))}
-            </div>
-          </div>
+          <details className="inspector-more">
+            <summary>Dateien <span>{card.files.length}</span></summary>
+            <div className="files-list">{card.files.map(file => <a key={file.id} className="file-item" href={file.url} target="_blank" rel="noreferrer"><FileIcon size={14} /><span className="file-name">{file.name}</span></a>)}</div>
+          </details>
         )}
 
         {card.activities && card.activities.length > 0 && (
-          <div className="inspector-section">
-            <h3>Activity</h3>
-            <div className="activity-list">
-              {card.activities.map((activity) => (
-                <div key={activity.id} className="activity-item">
-                  <span className="activity-time">
-                    {new Date(activity.createdAt).toLocaleString('de-DE', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </span>
-                  <span className="activity-message">{activity.message}</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          <details className="inspector-more">
+            <summary>Verlauf <span>{card.activities.length}</span></summary>
+            <div className="activity-list">{card.activities.slice(0, 8).map(activity => <div className="activity-item" key={activity.id}><span>{new Date(activity.createdAt).toLocaleDateString('de-DE')}</span><p>{activity.message}</p></div>)}</div>
+          </details>
         )}
 
         <div className="inspector-actions">
-          <button className="btn-primary" onClick={handleSave} disabled={saving}>
-            {saving ? 'Speichert…' : 'Speichern'}
-          </button>
-          <button className="btn-secondary" onClick={handleArchive}>
-            Archivieren
-          </button>
-          <button className="btn-danger" onClick={handleDelete} title="Card löschen">
-            Löschen
-          </button>
+          <button className="btn-primary" onClick={handleSave} disabled={saving}>{saving ? 'Speichert…' : 'Speichern'}</button>
+          {isArchived ? <button className="btn-secondary restore" onClick={handleRestore}>↩ Wiederherstellen</button> : <button className="btn-secondary" onClick={handleArchive}>✓ Erledigt</button>}
+          <button className="inspector-delete" onClick={handleDelete}>Löschen</button>
         </div>
       </div>
 
-      {zoomed && card.thumbnail && (
-        <Lightbox src={card.thumbnail} alt={card.title} onClose={() => setZoomed(false)} />
-      )}
-    </div>
+      {zoomed && card.thumbnail && <Lightbox src={card.thumbnail} alt={card.title} onClose={() => setZoomed(false)} />}
+    </aside>
   )
 }
