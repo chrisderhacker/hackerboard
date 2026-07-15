@@ -1,4 +1,4 @@
-.daily-spark { position: relative; min-height:0; height:100%; display:flex; flex-direction:column; animation: grid-in 0.4s cubic-bezier(0.22, 1, 0.36, 1); overflow:hidden; }
+.daily-spark { position: relative; animation: grid-in 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
 .spark-stats { display: grid; grid-template-columns: repeat(4, minmax(100px, 1fr)) auto; gap: 1px; margin-bottom: 0.85rem; background: var(--border); border: 1px solid var(--border); overflow: hidden; }
 .spark-stats > div { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.78rem 0.9rem; background: rgba(45, 47, 46, 0.92); }
 .spark-stats span { color: var(--text-muted); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.12em; }
@@ -8,7 +8,6 @@
 .shuffle-button { padding: 0 1.1rem; border: 0; background: var(--panel); color: var(--text-secondary); cursor: pointer; transition: color 0.2s, background 0.2s; }
 .shuffle-button:hover { color: var(--accent); background: var(--bg-elevated); }
 .spark-mosaic { display: grid; grid-template-columns: repeat(5, minmax(110px, 1fr)); grid-auto-rows: 156px; grid-auto-flow: dense; gap: 0.42rem; }
-.living-mosaic>.spark-tile{animation:tile-bloom .9s cubic-bezier(.16,1,.3,1) both}
 .spark-tile { position: relative; min-width: 0; overflow: hidden; border: 1px solid #4a4b49; border-radius: 7px; background: #303130; cursor: pointer; isolation: isolate; transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s, box-shadow 0.3s; }
 .spark-tile:hover { z-index: 3; transform: translateY(-3px) scale(1.015); border-color: var(--accent); box-shadow: 0 14px 32px rgba(0,0,0,.5), 0 0 34px rgba(204,255,0,.13); }
 .spark-tile.selected { z-index: 4; overflow:visible; border-color: transparent; box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 70px rgba(204,255,0,.28),0 0 110px rgba(204,255,0,.16); }
@@ -79,7 +78,6 @@
 .reward-toast p { color: var(--text-muted); font-size: .68rem; }
 @keyframes spark-rotate { to { transform: rotate(360deg); } }
 @keyframes feed-breathe { 50% { transform: scale(1.05); filter: brightness(1.15); } }
-@keyframes tile-bloom{from{opacity:0;transform:scale(.94) translateY(10px);filter:blur(8px) brightness(.6)}to{opacity:1;transform:none;filter:none}}
 @media (max-width: 1200px) { .spark-mosaic { grid-template-columns: repeat(4, 1fr); } .spark-stats { grid-template-columns: repeat(4, 1fr); } .shuffle-button { grid-column: 1 / -1; padding: .7rem; } }
 @media (max-width: 760px) { .spark-mosaic { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 140px; } .spark-stats { grid-template-columns: repeat(2, 1fr); } .spark-tile.feature { grid-column: span 2; } .spark-live-transit{grid-row:span 2}.daily-directions{grid-template-columns:1fr}.daily-directions section{padding:.5rem .65rem}.daily-directions section>div{margin:.3rem 0 .15rem}.daily-directions strong{font-size:1.75rem}.spark-live-weather{grid-row:span 2}.daily-weather-content{align-items:flex-start;flex-direction:column;gap:.7rem} }
 @media (prefers-reduced-motion: reduce) { .spark-tile, .spark-art span, .feed-grid img, .feed-placeholder, .reward-toast { animation: none; transition: none; } }
