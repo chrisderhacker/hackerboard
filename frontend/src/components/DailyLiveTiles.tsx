@@ -3,8 +3,8 @@ import type { TransitData, WeatherData } from './wien-live/types'
 const clock = (value:string|null) => value ? new Intl.DateTimeFormat('de-AT',{timeZone:'Europe/Vienna',hour:'2-digit',minute:'2-digit'}).format(new Date(value)) : '–'
 const weatherIcons:Record<number,string>={0:'☀',1:'◒',2:'◒',3:'☁',45:'≋',48:'≋',51:'☂',53:'☂',55:'☂',61:'☂',63:'☂',65:'☂',71:'❄',73:'❄',75:'❄',80:'☂',81:'☂',82:'☂',95:'ϟ',96:'ϟ',99:'ϟ'}
 
-export function DailyTransitTile({data,loading,error}:{data?:TransitData;loading:boolean;error:string|null}) {
-  return <article className="spark-tile spark-live-transit wide">
+export function DailyTransitTile({data,loading,error,order}:{data?:TransitData;loading:boolean;error:string|null;order:number}) {
+  return <article className="spark-tile spark-live-transit wide" style={{order}}>
     <div className="daily-live-head"><span>JETZT · DONAUMARINA</span><b>U2 LIVE</b></div>
     {loading&&<div className="daily-live-state">Abfahrten werden geladen …</div>}
     {error&&<div className="daily-live-state error">⚠ {error}</div>}
@@ -13,8 +13,8 @@ export function DailyTransitTile({data,loading,error}:{data?:TransitData;loading
   </article>
 }
 
-export function DailyWeatherTile({data,loading,error}:{data?:WeatherData;loading:boolean;error:string|null}) {
-  return <article className="spark-tile spark-live-weather wide">
+export function DailyWeatherTile({data,loading,error,order}:{data?:WeatherData;loading:boolean;error:string|null;order:number}) {
+  return <article className="spark-tile spark-live-weather wide" style={{order}}>
     <div className="daily-live-head"><span>WETTER · WIEN</span><b>{data?weatherIcons[data.weatherCode]||'◌':'◌'}</b></div>
     {loading&&<div className="daily-live-state dark">Wetter wird geladen …</div>}
     {error&&<div className="daily-live-state dark">⚠ {error}</div>}
