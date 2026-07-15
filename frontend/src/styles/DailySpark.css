@@ -1,4 +1,4 @@
-.daily-spark { position: relative; animation: grid-in 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+.daily-spark { position: relative; min-height:0; height:100%; display:flex; flex-direction:column; animation: grid-in 0.4s cubic-bezier(0.22, 1, 0.36, 1); overflow:hidden; }
 .spark-stats { display: grid; grid-template-columns: repeat(4, minmax(100px, 1fr)) auto; gap: 1px; margin-bottom: 0.85rem; background: var(--border); border: 1px solid var(--border); overflow: hidden; }
 .spark-stats > div { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.78rem 0.9rem; background: rgba(45, 47, 46, 0.92); }
 .spark-stats span { color: var(--text-muted); font-size: 0.58rem; font-weight: 600; letter-spacing: 0.12em; }
@@ -8,6 +8,8 @@
 .shuffle-button { padding: 0 1.1rem; border: 0; background: var(--panel); color: var(--text-secondary); cursor: pointer; transition: color 0.2s, background 0.2s; }
 .shuffle-button:hover { color: var(--accent); background: var(--bg-elevated); }
 .spark-mosaic { display: grid; grid-template-columns: repeat(5, minmax(110px, 1fr)); grid-auto-rows: 156px; grid-auto-flow: dense; gap: 0.42rem; }
+.screen-transition{transform-origin:50% 50%;will-change:transform,opacity,clip-path}.screen-transition.transition-0{animation:screen-reveal .72s cubic-bezier(.2,.85,.25,1) both}.screen-transition.transition-1{animation:screen-rise .7s cubic-bezier(.16,1,.3,1) both}.screen-transition.transition-2{animation:screen-fold .78s cubic-bezier(.22,1,.36,1) both}
+.spark-pages{display:flex;justify-content:center;align-items:center;gap:.38rem;margin-top:auto;padding-top:.7rem}.spark-pages button{width:28px;height:12px;padding:0;border:0;background:transparent;cursor:pointer}.spark-pages span{display:block;width:100%;height:2px;border-radius:2px;background:rgba(255,255,255,.16);overflow:hidden}.spark-pages button.active span{background:linear-gradient(90deg,var(--accent),rgba(204,255,0,.3));box-shadow:0 0 8px rgba(204,255,0,.4);animation:page-progress 10s linear both}
 .spark-tile { position: relative; min-width: 0; overflow: hidden; border: 1px solid #4a4b49; border-radius: 7px; background: #303130; cursor: pointer; isolation: isolate; transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s, box-shadow 0.3s; }
 .spark-tile:hover { z-index: 3; transform: translateY(-3px) scale(1.015); border-color: var(--accent); box-shadow: 0 14px 32px rgba(0,0,0,.5), 0 0 34px rgba(204,255,0,.13); }
 .spark-tile.selected { z-index: 4; border-color: transparent; box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 60px rgba(204,255,0,.18),0 0 100px rgba(204,255,0,.1); }
@@ -77,6 +79,10 @@
 .reward-toast p { color: var(--text-muted); font-size: .68rem; }
 @keyframes spark-rotate { to { transform: rotate(360deg); } }
 @keyframes feed-breathe { 50% { transform: scale(1.05); filter: brightness(1.15); } }
+@keyframes screen-reveal{from{opacity:0;clip-path:inset(0 100% 0 0);transform:translateX(24px)}to{opacity:1;clip-path:inset(0);transform:none}}
+@keyframes screen-rise{from{opacity:0;transform:translateY(28px) scale(.975);filter:blur(8px)}to{opacity:1;transform:none;filter:none}}
+@keyframes screen-fold{from{opacity:0;transform:perspective(1000px) rotateY(-7deg) scale(.98);filter:brightness(.55)}to{opacity:1;transform:none;filter:none}}
+@keyframes page-progress{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0)}}
 @media (max-width: 1200px) { .spark-mosaic { grid-template-columns: repeat(4, 1fr); } .spark-stats { grid-template-columns: repeat(4, 1fr); } .shuffle-button { grid-column: 1 / -1; padding: .7rem; } }
 @media (max-width: 760px) { .spark-mosaic { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 140px; } .spark-stats { grid-template-columns: repeat(2, 1fr); } .spark-tile.feature { grid-column: span 2; } .spark-live-transit{grid-row:span 2}.daily-directions{grid-template-columns:1fr}.daily-directions section{padding:.5rem .65rem}.daily-directions section>div{margin:.3rem 0 .15rem}.daily-directions strong{font-size:1.75rem}.spark-live-weather{grid-row:span 2}.daily-weather-content{align-items:flex-start;flex-direction:column;gap:.7rem} }
-@media (prefers-reduced-motion: reduce) { .spark-tile, .spark-art span, .feed-grid img, .feed-placeholder, .reward-toast { animation: none; transition: none; } }
+@media (prefers-reduced-motion: reduce) { .spark-tile, .spark-art span, .feed-grid img, .feed-placeholder, .reward-toast,.screen-transition,.spark-pages button.active span { animation: none; transition: none; } }

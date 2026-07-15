@@ -56,9 +56,13 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const [liveLoading,setLiveLoading]=useState(true)
   const [liveError,setLiveError]=useState<string|null>(null)
   const [imageShapes,setImageShapes]=useState<Record<string,'standard'|'wide'|'portrait'>>({})
+  const [deckSeed,setDeckSeed]=useState(()=>Date.now())
+  const [slidePage,setSlidePage]=useState(0)
+  const [pageSize,setPageSize]=useState(()=>window.innerWidth>1200?5:window.innerWidth>760?4:2)
 
   const refreshLive=useCallback(async(signal?:AbortSignal)=>{try{setLiveError(null);const [transitResponse,weatherResponse]=await Promise.all([fetch('/api/wien/transit/departures?diva=60200282&line=U2',{signal}),fetch('/api/wien/weather?lat=48.2061223&lon=16.4309681',{signal})]);if(!transitResponse.ok||!weatherResponse.ok)throw new Error('Live-Daten derzeit nicht erreichbar');const [nextTransit,nextWeather]=await Promise.all([transitResponse.json(),weatherResponse.json()]);setTransit(nextTransit);setWeather(nextWeather)}catch(reason){if((reason as Error).name!=='AbortError')setLiveError((reason as Error).message)}finally{setLiveLoading(false)}},[])
   useEffect(()=>{const controller=new AbortController();refreshLive(controller.signal);const timer=window.setInterval(()=>refreshLive(),30_000);return()=>{controller.abort();window.clearInterval(timer)}},[refreshLive])
+  useEffect(()=>{const resize=()=>setPageSize(window.innerWidth>1200?5:window.innerWidth>760?4:2);window.addEventListener('resize',resize);return()=>window.removeEventListener('resize',resize)},[])
 
   const visibleCards = useMemo(() => {
     const ranked = cards.filter((card) => card.section !== 'archive' && card.status !== 'done' && card.status !== 'archived').sort((a, b) => {
@@ -77,7 +81,12 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const doneToday = cards.filter((card) => card.status === 'done' && isSameDay(card.updatedAt)).length
   const doneWeek = cards.filter((card) => card.status === 'done' && isWithinDays(card.updatedAt, 7)).length
   const open = cards.filter((card) => card.status !== 'done' && card.status !== 'archived').length
-  const mixedOrder=(index:number)=>shuffleSeed===0?index:(index*37+shuffleSeed)%101
+  const deck=useMemo(()=>['transit','weather',...visibleCards.map(card=>`card:${card.id}`),'feed'].map((id,index)=>({id,order:Math.sin(deckSeed*.0001+index*91.7)})).sort((a,b)=>a.order-b.order).map(item=>item.id),[visibleCards,deckSeed])
+  const pageCount=Math.max(1,Math.ceil(deck.length/pageSize))
+  const currentItems=deck.slice((slidePage%pageCount)*pageSize,(slidePage%pageCount+1)*pageSize)
+  const currentSet=new Set(currentItems)
+  useEffect(()=>{setSlidePage(0)},[pageSize,deckSeed])
+  useEffect(()=>{if(selectedCardId||pageCount<2)return;const timer=window.setInterval(()=>setSlidePage(current=>{if(current+1>=pageCount){setDeckSeed(Date.now());return 0}return current+1}),10_000);return()=>window.clearInterval(timer)},[pageCount,selectedCardId])
 
   const completeCard = async (event: React.MouseEvent, card: Card) => {
     event.stopPropagation()
@@ -102,19 +111,24 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
         <div><span>DIESE WOCHE</span><strong>{doneWeek} erledigt</strong></div>
         <div><span>NOCH OFFEN</span><strong>{open} Aufgaben</strong></div>
         <div className="streak"><span>CREATIVE STREAK</span><strong>⚡ Weiter so</strong></div>
-        <button className="shuffle-button" onClick={() => {setShuffleSeed(Date.now());setLiveLoading(true);refreshLive()}}>✦ Neu mischen</button>
+        <button className="shuffle-button" onClick={() => {const seed=Date.now();setShuffleSeed(seed);setDeckSeed(seed);setSlidePage(0);setLiveLoading(true);refreshLive()}}>✦ Neu mischen</button>
       </div>
 
-      <div className="spark-mosaic">
-        <DailyTransitTile data={transit} loading={liveLoading&&!transit} error={!transit?liveError:null} order={mixedOrder(0)}/>
-        <DailyWeatherTile data={weather} loading={liveLoading&&!weather} error={!weather?liveError:null} order={mixedOrder(1)}/>
+      <div className={`spark-mosaic screen-transition transition-${slidePage%3}`} key={`${deckSeed}-${slidePage}-${pageSize}`}>
+        {currentSet.has('transit') && (
+          <DailyTransitTile data={transit} loading={liveLoading&&!transit} error={!transit?liveError:null} order={currentItems.indexOf('transit')}/>
+        )}
+        {currentSet.has('weather') && (
+          <DailyWeatherTile data={weather} loading={liveLoading&&!weather} error={!weather?liveError:null} order={currentItems.indexOf('weather')}/>
+        )}
         {visibleCards.map((card, index) => {
+          if(!currentSet.has(`card:${card.id}`))return null
           const shape=card.thumbnail?(imageShapes[card.id]||'standard'):tileShapes[index%tileShapes.length]
           return (
           <article
             key={card.id}
             className={`spark-tile ${shape} poster-${index % 6} ${card.thumbnail?'has-image':''} ${card.id === selectedCardId ? 'selected' : ''}`}
-            style={{order:mixedOrder(index+2)}}
+            style={{order:currentItems.indexOf(`card:${card.id}`)}}
             onClick={() => onSelectCard(card)}
             tabIndex={0}
             onKeyDown={(event)=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();onSelectCard(card)}}}
@@ -139,13 +153,15 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
           </article>
         )})}
 
-        <a className="spark-tile inspiration-feed" style={{order:mixedOrder(visibleCards.length+2)}} href="https://www.midjourney.com/explore?tab=top" target="_blank" rel="noreferrer" aria-label="Midjourney Explore öffnen">
+        {currentSet.has('feed')&&<a className="spark-tile inspiration-feed" style={{order:currentItems.indexOf('feed')}} href="https://www.midjourney.com/explore?tab=top" target="_blank" rel="noreferrer" aria-label="Midjourney Explore öffnen">
           <div className="feed-grid">
             {Array.from({ length: 6 }).map((_, index) => <i key={index} className={`feed-placeholder feed-${index}`} />)}
           </div>
           <div className="feed-label"><span>MIDJOURNEY EXPLORE</span><strong>Top öffnen ↗</strong></div>
-        </a>
+        </a>}
       </div>
+
+      {pageCount>1&&<nav className="spark-pages" aria-label="Übersichtsseiten">{Array.from({length:pageCount}).map((_,index)=><button key={index} className={index===slidePage%pageCount?'active':''} onClick={()=>setSlidePage(index)} aria-label={`Seite ${index+1} anzeigen`}><span/></button>)}</nav>}
 
       <div className={`reward-toast ${reward ? 'show' : ''}`} role="status" aria-live="polite">
         <span>✦</span><div><small>ERLEDIGT · +25 XP</small><strong>{reward}</strong><p>Momentum aufgebaut!</p></div>
