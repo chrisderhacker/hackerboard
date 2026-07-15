@@ -55,6 +55,7 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const [weather,setWeather]=useState<WeatherData>()
   const [liveLoading,setLiveLoading]=useState(true)
   const [liveError,setLiveError]=useState<string|null>(null)
+  const [imageShapes,setImageShapes]=useState<Record<string,'standard'|'wide'|'portrait'>>({})
 
   const refreshLive=useCallback(async(signal?:AbortSignal)=>{try{setLiveError(null);const [transitResponse,weatherResponse]=await Promise.all([fetch('/api/wien/transit/departures?diva=60200282&line=U2',{signal}),fetch('/api/wien/weather?lat=48.2061223&lon=16.4309681',{signal})]);if(!transitResponse.ok||!weatherResponse.ok)throw new Error('Live-Daten derzeit nicht erreichbar');const [nextTransit,nextWeather]=await Promise.all([transitResponse.json(),weatherResponse.json()]);setTransit(nextTransit);setWeather(nextWeather)}catch(reason){if((reason as Error).name!=='AbortError')setLiveError((reason as Error).message)}finally{setLiveLoading(false)}},[])
   useEffect(()=>{const controller=new AbortController();refreshLive(controller.signal);const timer=window.setInterval(()=>refreshLive(),30_000);return()=>{controller.abort();window.clearInterval(timer)}},[refreshLive])
@@ -107,10 +108,12 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
       <div className="spark-mosaic">
         <DailyTransitTile data={transit} loading={liveLoading&&!transit} error={!transit?liveError:null} order={mixedOrder(0)}/>
         <DailyWeatherTile data={weather} loading={liveLoading&&!weather} error={!weather?liveError:null} order={mixedOrder(1)}/>
-        {visibleCards.map((card, index) => (
+        {visibleCards.map((card, index) => {
+          const shape=card.thumbnail?(imageShapes[card.id]||'standard'):tileShapes[index%tileShapes.length]
+          return (
           <article
             key={card.id}
-            className={`spark-tile ${tileShapes[index % tileShapes.length]} poster-${index % 6} ${card.thumbnail?'has-image':''} ${card.id === selectedCardId ? 'selected' : ''}`}
+            className={`spark-tile ${shape} poster-${index % 6} ${card.thumbnail?'has-image':''} ${card.id === selectedCardId ? 'selected' : ''}`}
             style={{order:mixedOrder(index+2)}}
             onClick={() => onSelectCard(card)}
             tabIndex={0}
@@ -118,7 +121,7 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
           >
             <span className="spark-dot-halo" aria-hidden="true" />
             {card.thumbnail ? (
-              <img src={card.thumbnail} alt="" />
+              <img src={card.thumbnail} alt="" onLoad={(event)=>{const ratio=event.currentTarget.naturalWidth/event.currentTarget.naturalHeight;const next=ratio>1.22?'wide':ratio<.82?'portrait':'standard';setImageShapes(current=>current[card.id]===next?current:{...current,[card.id]:next})}} />
             ) : (
               <div className={`spark-art art-${index % 5}`} aria-hidden="true"><span>{index % 3 === 0 ? '✦' : index % 3 === 1 ? '◐' : '↗'}</span></div>
             )}
@@ -134,7 +137,7 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
               </div>
             </div>
           </article>
-        ))}
+        )})}
 
         <a className="spark-tile inspiration-feed" style={{order:mixedOrder(visibleCards.length+2)}} href="https://www.midjourney.com/explore?tab=top" target="_blank" rel="noreferrer" aria-label="Midjourney Explore öffnen">
           <div className="feed-grid">
