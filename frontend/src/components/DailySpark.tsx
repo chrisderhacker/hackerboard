@@ -56,7 +56,12 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const [liveLoading,setLiveLoading]=useState(true)
   const [liveError,setLiveError]=useState<string|null>(null)
   const [imageShapes,setImageShapes]=useState<Record<string,'standard'|'wide'|'portrait'>>({})
+  const [now,setNow]=useState(()=>new Date())
+  const [isFullscreen,setIsFullscreen]=useState(false)
   const infiniteBoardRef=useRef<HTMLDivElement>(null)
+  const dailySparkRef=useRef<HTMLDivElement>(null)
+
+  useEffect(()=>{const timer=window.setInterval(()=>setNow(new Date()),1_000);const handleFullscreen=()=>setIsFullscreen(document.fullscreenElement===dailySparkRef.current);document.addEventListener('fullscreenchange',handleFullscreen);return()=>{window.clearInterval(timer);document.removeEventListener('fullscreenchange',handleFullscreen)}},[])
 
   const refreshLive=useCallback(async(signal?:AbortSignal)=>{try{setLiveError(null);const [transitResponse,weatherResponse]=await Promise.all([fetch('/api/wien/transit/departures?diva=60200282&line=U2',{signal}),fetch('/api/wien/weather?lat=48.2061223&lon=16.4309681',{signal})]);if(!transitResponse.ok||!weatherResponse.ok)throw new Error('Live-Daten derzeit nicht erreichbar');const [nextTransit,nextWeather]=await Promise.all([transitResponse.json(),weatherResponse.json()]);setTransit(nextTransit);setWeather(nextWeather)}catch(reason){if((reason as Error).name!=='AbortError')setLiveError((reason as Error).message)}finally{setLiveLoading(false)}},[])
   useEffect(()=>{const controller=new AbortController();refreshLive(controller.signal);const timer=window.setInterval(()=>refreshLive(),30_000);return()=>{controller.abort();window.clearInterval(timer)}},[refreshLive])
@@ -108,13 +113,15 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   </section>
 
   return (
-    <div className="daily-spark">
+    <div className="daily-spark" ref={dailySparkRef}>
       <div className="spark-stats">
+        <div className="spark-clock"><span>{new Intl.DateTimeFormat('de-AT',{timeZone:'Europe/Vienna',weekday:'short',day:'2-digit',month:'short'}).format(now).toUpperCase()}</span><strong>{new Intl.DateTimeFormat('de-AT',{timeZone:'Europe/Vienna',hour:'2-digit',minute:'2-digit'}).format(now)}</strong></div>
         <div><span>HEUTE</span><strong>{doneToday} erledigt</strong></div>
         <div><span>DIESE WOCHE</span><strong>{doneWeek} erledigt</strong></div>
         <div><span>NOCH OFFEN</span><strong>{open} Aufgaben</strong></div>
         <div className="streak"><span>CREATIVE STREAK</span><strong>⚡ Weiter so</strong></div>
         <button className="shuffle-button" onClick={() => {setShuffleSeed(Date.now());setLiveLoading(true);refreshLive()}}>✦ Neu mischen</button>
+        <button className="fullscreen-button" onClick={()=>isFullscreen?document.exitFullscreen():dailySparkRef.current?.requestFullscreen()} aria-label={isFullscreen?'Vollbild verlassen':'Vollbild öffnen'} title={isFullscreen?'Vollbild verlassen':'Vollbild öffnen'}>{isFullscreen?'↙':'⛶'} <span>{isFullscreen?'Zurück':'Vollbild'}</span></button>
       </div>
 
       <div className="infinite-board" ref={infiniteBoardRef}>

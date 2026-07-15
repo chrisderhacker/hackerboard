@@ -16,6 +16,7 @@ function App() {
   const [loading, setLoading] = useState(true)
   const [showCommandBar, setShowCommandBar] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem('hackerboard.sidebarCollapsed') === 'true')
   const dragDepth = useRef(0)
 
   useEffect(() => {
@@ -181,6 +182,12 @@ function App() {
 
       <Sidebar
         activeSection={activeSection}
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed((current) => {
+          const next = !current
+          localStorage.setItem('hackerboard.sidebarCollapsed', String(next))
+          return next
+        })}
         onSectionChange={(section) => { setActiveSection(section); setSelectedCard(null) }}
         onCreateCard={createEmptyCard}
       />

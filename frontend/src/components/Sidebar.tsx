@@ -12,6 +12,8 @@ interface SidebarProps {
   activeSection: string
   onSectionChange: (section: string) => void
   onCreateCard: () => void
+  collapsed: boolean
+  onToggle: () => void
 }
 
 export const sections = [
@@ -22,16 +24,19 @@ export const sections = [
   { id: 'archive', label: 'Archive', Icon: ArchiveIcon },
 ]
 
-export default function Sidebar({ activeSection, onSectionChange, onCreateCard }: SidebarProps) {
+export default function Sidebar({ activeSection, onSectionChange, onCreateCard, collapsed, onToggle }: SidebarProps) {
   const [pinged, setPinged] = useState<string | null>(null)
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
         <div className="logo">
           <BoltLogo size={20} className="logo-icon" />
           <span className="logo-text">HackerBoard</span>
         </div>
+        <button className="sidebar-toggle" onClick={onToggle} aria-label={collapsed ? 'Menü ausklappen' : 'Menü einklappen'} title={collapsed ? 'Menü ausklappen' : 'Menü einklappen'}>
+          <span aria-hidden="true">{collapsed ? '›' : '‹'}</span>
+        </button>
       </div>
 
       <nav className="sidebar-nav">

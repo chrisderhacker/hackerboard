@@ -102,3 +102,10 @@ Der Ordner `/Users/derhacker/Documents/Mediahub/hackerboard` ist das primäre Gi
 `frontend/` (React/Vite) · `backend/` (Fastify/Prisma) · `DOKUMENTATION.md` · `docker-compose.yml` · `backend.Dockerfile` · `nginx.conf` · `README.md` · `.env.example`
 
 Der ältere Ordner `./files/` ist nur noch eine historische Projektkopie und darf nicht als Quelle für Entwicklung oder Deployment verwendet werden. Der bisherige Arbeitsordner `/Users/derhacker/Documents/board` ist ebenfalls nicht mehr der primäre Arbeitsort.
+# Übersicht – Bedienung
+
+- Die Status-Timeline schwebt über dem unendlichen Board und zeigt Datum/Uhrzeit in `Europe/Vienna`.
+- Das linke Menü kann eingeklappt werden; der Zustand bleibt im Browser gespeichert.
+- Der Vollbild-Button zeigt nur die Übersicht. `Esc` beendet den Vollbildmodus.
+- Übersichtskacheln haben keine permanente Kontur. Hover und Auswahl verwenden den animierten Lime-Glow der Inbox.
+- Bildinhalte werden innerhalb der jeweiligen Kachel beschnitten und können nicht in Nachbarkacheln ragen.
