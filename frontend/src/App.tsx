@@ -6,11 +6,12 @@ import Sidebar from './components/Sidebar'
 import CommandBar from './components/CommandBar'
 import CardGrid from './components/CardGrid'
 import Inspector from './components/Inspector'
+import DailySpark from './components/DailySpark'
 
 function App() {
   const [cards, setCards] = useState<Card[]>([])
   const [selectedCard, setSelectedCard] = useState<Card | null>(null)
-  const [activeSection, setActiveSection] = useState('inbox')
+  const [activeSection, setActiveSection] = useState('daily-spark')
   const [loading, setLoading] = useState(true)
   const [showCommandBar, setShowCommandBar] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
@@ -38,7 +39,9 @@ function App() {
       const response = await fetch(`/api/cards`)
       if (!response.ok) throw new Error(`API ${response.status}`)
       const data = await response.json()
-      const filtered = data.filter((card: Card) => card.section === activeSection)
+      const filtered = activeSection === 'daily-spark'
+        ? data
+        : data.filter((card: Card) => card.section === activeSection)
       setCards(filtered)
     } catch (error) {
       console.warn('API not reachable:', error)
@@ -96,7 +99,12 @@ function App() {
       const response = await fetch('/api/cards', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: 'Neue Card', section: activeSection, status: 'inbox', tags: [] }),
+        body: JSON.stringify({
+          title: 'Neue Card',
+          section: activeSection === 'daily-spark' ? 'inbox' : activeSection,
+          status: 'inbox',
+          tags: [],
+        }),
       })
       if (!response.ok) throw new Error(`API ${response.status}`)
       const created: Card = await response.json()
@@ -177,14 +185,17 @@ function App() {
 
       <main className="main-content">
         <div className="cards-container">
-          <div className="section-header">
-            <h1>{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h1>
+          <div className={`section-header ${activeSection === 'daily-spark' ? 'daily-spark-header' : ''}`}>
+            <div>
+              {activeSection === 'daily-spark' && <span className="section-eyebrow">DEIN KREATIVER MIX FÜR HEUTE</span>}
+              <h1>{activeSection === 'daily-spark' ? 'Daily Spark' : activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h1>
+            </div>
             <div className="filters">
-              <button className="filter-chip">All</button>
-              <button className="filter-chip">Pinned</button>
-              <button className="filter-chip">Due Soon</button>
+              {activeSection !== 'daily-spark' && <button className="filter-chip">All</button>}
+              {activeSection !== 'daily-spark' && <button className="filter-chip">Pinned</button>}
+              {activeSection !== 'daily-spark' && <button className="filter-chip">Due Soon</button>}
               <button className="new-card-btn" onClick={createEmptyCard}>
-                + Neue Card
+                + {activeSection === 'daily-spark' ? 'Idee parken' : 'Neue Card'}
               </button>
             </div>
           </div>
@@ -192,12 +203,22 @@ function App() {
           {loading ? (
             <div className="loading">Loading...</div>
           ) : (
-            <CardGrid
-              cards={cards}
-              onSelectCard={setSelectedCard}
-              onDeleteCard={deleteCard}
-              selectedCardId={selectedCard?.id}
-            />
+            activeSection === 'daily-spark' ? (
+              <DailySpark
+                cards={cards}
+                onSelectCard={setSelectedCard}
+                onCardCompleted={(updated) => {
+                  setCards((current) => current.map((card) => card.id === updated.id ? updated : card))
+                }}
+              />
+            ) : (
+              <CardGrid
+                cards={cards}
+                onSelectCard={setSelectedCard}
+                onDeleteCard={deleteCard}
+                selectedCardId={selectedCard?.id}
+              />
+            )
           )}
         </div>
 
@@ -206,7 +227,7 @@ function App() {
             card={selectedCard}
             onClose={() => setSelectedCard(null)}
             onUpdate={(updated) => {
-              if (updated.section !== activeSection) {
+              if (activeSection !== 'daily-spark' && updated.section !== activeSection) {
                 setSelectedCard(null)
               } else {
                 setSelectedCard(updated)

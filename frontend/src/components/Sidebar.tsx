@@ -18,6 +18,7 @@ interface SidebarProps {
 }
 
 export const sections = [
+  { id: 'daily-spark', label: 'Daily Spark', Icon: BoltLogo },
   { id: 'inbox', label: 'Inbox', Icon: InboxIcon },
   { id: 'next-steps', label: "What's Next", Icon: ZapIcon },
   { id: 'ideas', label: 'Ideas', Icon: BulbIcon },

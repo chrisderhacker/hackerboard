@@ -46,4 +46,6 @@ export interface Card {
   notes?: CardNote[]
   checklist?: ChecklistItem[]
   activities?: CardActivity[]
+  createdAt?: string
+  updatedAt?: string
 }
