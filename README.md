@@ -74,11 +74,11 @@ The `Wien Live` module adds a resilient, server-cached overview for Vienna:
 
 - U2 Donaumarina live departures via Wiener Linien Open Data (20 s cache)
 - Vienna weather via Open-Meteo (10 min cache)
-- Traffic provider interface; TomTom is implemented when configured (3 min cache)
+- Traffic provider interface; Google Routes and TomTom are implemented (3 min cache)
 - Unified event model with a clearly marked mock provider until a reliable source is configured
 - Combined endpoint: `GET /api/wien/dashboard`
 
-All external APIs are called by the Fastify backend. No API key is exposed to the frontend. Copy `.env.example` and configure `TRAFFIC_PROVIDER=tomtom` plus `TRAFFIC_API_KEY` to activate live traffic data. Without a key the UI explicitly shows “Verkehrsdaten noch nicht eingerichtet”.
+Live route calculations are called by the Fastify backend. Configure `TRAFFIC_PROVIDER=google` and a server-restricted `TRAFFIC_API_KEY` for Google Routes. The interactive traffic map additionally needs `GOOGLE_MAPS_BROWSER_API_KEY`; this key is necessarily delivered to Google Maps JavaScript in the browser and must be restricted to the HackerBoard HTTP referrers. Without keys the UI explicitly shows the setup state instead of invented data.
 
 Additional routes:
 

@@ -14,7 +14,7 @@
 - `backend/src/wien/routes.ts` — Transit-, Traffic-, Wetter-, Event- und kombinierte Dashboard-Routen.
 - `backend/src/wien/providers/transit.ts` — Wiener Linien Open Data, DIVA-/Stationsauflösung und reale Intervallberechnung.
 - `backend/src/wien/providers/weather.ts` — austauschbarer Open-Meteo-Wetterprovider.
-- `backend/src/wien/providers/traffic.ts` — Provider-Schnittstelle und optionale TomTom-Anbindung.
+- `backend/src/wien/providers/traffic.ts` — Provider-Schnittstelle für Google Routes und TomTom.
 - `backend/src/wien/providers/events.ts` — einheitliches Eventmodell und klar markierter Mock-Provider.
 
 ## Neue Frontend-Dateien
@@ -29,6 +29,6 @@
 
 - U-Bahn: Wiener Linien Open Data, Standard-DIVA `60200282` (Donaumarina), Cache 20 Sekunden.
 - Wetter: Open-Meteo, Standardkoordinaten Donaumarina, Cache 10 Minuten.
-- Verkehr: ohne `TRAFFIC_PROVIDER`/`TRAFFIC_API_KEY` keine erfundenen Zeiten; TomTom ist als erster Provider implementiert.
+- Verkehr: Google Routes liefert serverseitig aktuelle und normale Fahrzeiten. Eine Google-Maps-Karte zeichnet Route und Echtzeit-Traffic-Layer; dafür ist ein eigener, referrer-beschränkter `GOOGLE_MAPS_BROWSER_API_KEY` nötig. Ohne Konfiguration werden keine Zeiten erfunden.
 - Events: bis zur Auswahl einer zuverlässigen Quelle ausschließlich deutlich gekennzeichnete Beispieldaten.
 - Fehler einer Quelle blockieren die übrigen Kacheln nicht. Bei vorhandenem Cache werden alte Daten mit einem Aktualitätshinweis weitergegeben.

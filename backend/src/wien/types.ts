@@ -36,6 +36,7 @@ export interface TrafficResult {
   delayMinutes: number | null
   status: 'frei' | 'dichter Verkehr' | 'Stau' | 'schwere Verzögerung' | 'nicht eingerichtet'
   incidents: Array<{ type: string; description: string; from?: string; to?: string }>
+  map?: { enabled: boolean; provider: 'google'; browserApiKey: string | null; start: { lat: number; lng: number }; destination: { lat: number; lng: number }; encodedPolyline: string | null }
   updatedAt: string
   notice?: string
 }

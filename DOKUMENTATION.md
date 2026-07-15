@@ -51,6 +51,7 @@ Ein **kreatives Command-Center / Ideen-Board** (Huly-inspiriert). Premium-Dark-U
 - **Wien-Live-Backend**: getrennte Module unter `backend/src/wien/` für Typen, Request-Coalescing/Cache, Wiener-Linien-, Wetter-, Traffic- und Event-Provider sowie kombinierte Dashboard-Route.
 - **Datenbank**: **SQLite via Prisma** (`backend/prisma/schema.prisma`) — DB-Datei `/root/hackerboard/data/hackerboard.db`. Tags als JSON-String gespeichert.
 - **Uploads**: `/root/hackerboard/data/uploads/`, serviert unter `/uploads/`.
+- **Google Traffic**: Fahrzeiten kommen serverseitig über die Routes API und werden drei Minuten gecacht. Die Karte nutzt Maps JavaScript plus Traffic Layer. Der separate Browser-Key muss auf `https://board.derhacker.com/*` eingeschränkt werden.
 
 ---
 
