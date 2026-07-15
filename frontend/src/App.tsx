@@ -7,6 +7,7 @@ import CommandBar from './components/CommandBar'
 import CardGrid from './components/CardGrid'
 import Inspector from './components/Inspector'
 import DailySpark from './components/DailySpark'
+import WienLiveDashboard from './components/wien-live/WienLiveDashboard'
 
 function App() {
   const [cards, setCards] = useState<Card[]>([])
@@ -59,7 +60,7 @@ function App() {
         const response = await fetch('/api/cards', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, section: activeSection, status: 'inbox', tags: [] }),
+          body: JSON.stringify({ title, section: ['daily-spark', 'wien-live'].includes(activeSection) ? 'inbox' : activeSection, status: 'inbox', tags: [] }),
         })
         if (!response.ok) throw new Error(`API ${response.status}`)
         let created: Card = await response.json()
@@ -180,11 +181,11 @@ function App() {
 
       <Sidebar
         activeSection={activeSection}
-        onSectionChange={setActiveSection}
+        onSectionChange={(section) => { setActiveSection(section); setSelectedCard(null) }}
       />
 
       <main className="main-content">
-        <div className="cards-container">
+        {activeSection === 'wien-live' ? <div className="wien-live-container"><WienLiveDashboard /></div> : <div className="cards-container">
           <div className={`section-header ${activeSection === 'daily-spark' ? 'daily-spark-header' : ''}`}>
             <h1>{activeSection === 'daily-spark' ? 'Daily Spark' : activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h1>
             <div className="filters">
@@ -218,9 +219,9 @@ function App() {
               />
             )
           )}
-        </div>
+        </div>}
 
-        {selectedCard && (
+        {activeSection !== 'wien-live' && selectedCard && (
           <Inspector
             card={selectedCard}
             onClose={() => setSelectedCard(null)}

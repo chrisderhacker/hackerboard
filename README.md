@@ -6,8 +6,8 @@ Premium dark UI for visual idea capture and next-step planning. A creative comma
 
 - **Frontend:** React 18 + Vite + TypeScript
 - **Backend:** Fastify + TypeScript
-- **Database:** PostgreSQL
-- **Deployment:** Docker Compose
+- **Database:** SQLite via Prisma
+- **Deployment:** PM2 on the VPS
 
 ## Setup
 
@@ -68,6 +68,28 @@ cd frontend && npm run build
 cd backend && npm run build
 ```
 
+## Wien Live
+
+The `Wien Live` module adds a resilient, server-cached overview for Vienna:
+
+- U2 Donaumarina live departures via Wiener Linien Open Data (20 s cache)
+- Vienna weather via Open-Meteo (10 min cache)
+- Traffic provider interface; TomTom is implemented when configured (3 min cache)
+- Unified event model with a clearly marked mock provider until a reliable source is configured
+- Combined endpoint: `GET /api/wien/dashboard`
+
+All external APIs are called by the Fastify backend. No API key is exposed to the frontend. Copy `.env.example` and configure `TRAFFIC_PROVIDER=tomtom` plus `TRAFFIC_API_KEY` to activate live traffic data. Without a key the UI explicitly shows “Verkehrsdaten noch nicht eingerichtet”.
+
+Additional routes:
+
+```text
+GET /api/wien/transit/stations?q=...
+GET /api/wien/transit/departures?diva=60200282&line=U2
+GET /api/wien/traffic
+GET /api/wien/weather
+GET /api/wien/events
+```
+
 ## Deployment
 
-Uses Docker Compose for production deployment on VPS.
+Production runs directly via PM2. See `DOKUMENTATION.md` for the VPS deployment procedure.

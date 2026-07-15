@@ -8,6 +8,7 @@ import { dirname, join, extname } from 'path'
 import { createWriteStream, promises as fsp } from 'fs'
 import { pipeline } from 'stream/promises'
 import { randomUUID } from 'crypto'
+import { registerWienRoutes } from './wien/routes.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -189,6 +190,8 @@ fastify.patch('/api/checklist/:id', async (request: any) => {
     data: { completed: !!request.body.completed },
   })
 })
+
+await registerWienRoutes(fastify)
 
 // Uploaded files
 await fastify.register(staticPlugin, {

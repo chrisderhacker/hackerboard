@@ -1,0 +1,95 @@
+export type TileState = 'live' | 'stale' | 'unavailable' | 'mock'
+
+export interface Departure {
+  plannedTime: string
+  realTime: string | null
+  countdown: number
+  delayMinutes: number
+}
+
+export interface TransitDirection {
+  line: string
+  towards: string
+  direction: string
+  platform?: string
+  departures: Departure[]
+  actualIntervalMinutes: number | null
+}
+
+export interface TransitResult {
+  state: TileState
+  source: string
+  station: { diva: string; name: string; latitude: number; longitude: number; permanent: boolean }
+  directions: TransitDirection[]
+  disruptions: string[]
+  updatedAt: string
+  notice?: string
+}
+
+export interface TrafficResult {
+  state: TileState
+  configured: boolean
+  provider: string | null
+  route: { start: string; destination: string }
+  currentMinutes: number | null
+  normalMinutes: number | null
+  delayMinutes: number | null
+  status: 'frei' | 'dichter Verkehr' | 'Stau' | 'schwere Verzögerung' | 'nicht eingerichtet'
+  incidents: Array<{ type: string; description: string; from?: string; to?: string }>
+  updatedAt: string
+  notice?: string
+}
+
+export interface WeatherHour {
+  time: string
+  temperature: number
+  precipitationProbability: number
+  precipitation: number
+  weatherCode: number
+}
+
+export interface WeatherResult {
+  state: TileState
+  source: string
+  location: { name: string; latitude: number; longitude: number }
+  temperature: number
+  apparentTemperature: number
+  weatherCode: number
+  condition: string
+  precipitationProbability: number
+  nextHourPrecipitation: number
+  windSpeed: number
+  high: number
+  low: number
+  sunset: string
+  warning: string | null
+  hourly: WeatherHour[]
+  updatedAt: string
+}
+
+export interface ViennaEvent {
+  id: string
+  title: string
+  start: string
+  end: string | null
+  venue: string
+  district: number | null
+  category: string
+  priceType: 'free' | 'paid' | 'unknown'
+  imageUrl: string | null
+  sourceName: string
+  sourceUrl: string | null
+  latitude: number | null
+  longitude: number | null
+  distanceKm: number | null
+  isMock: boolean
+}
+
+export interface EventsResult {
+  state: TileState
+  configured: boolean
+  source: string
+  events: ViennaEvent[]
+  updatedAt: string
+  notice?: string
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
   InboxIcon,
+  ZapIcon,
   CalendarIcon,
   ArchiveIcon,
   BoltLogo,
@@ -14,6 +15,7 @@ interface SidebarProps {
 
 export const sections = [
   { id: 'daily-spark', label: 'Daily Spark', Icon: BoltLogo },
+  { id: 'wien-live', label: 'Wien Live', Icon: ZapIcon },
   { id: 'inbox', label: 'Inbox', Icon: InboxIcon },
   { id: 'events', label: 'Events', Icon: CalendarIcon },
   { id: 'archive', label: 'Archive', Icon: ArchiveIcon },
@@ -35,6 +37,8 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
         {sections.map(({ id, label, Icon }) => (
           <button
             key={id}
+            aria-label={label}
+            title={label}
             className={`nav-item ${activeSection === id ? 'active' : ''} ${pinged === id ? 'pinging' : ''}`}
             onClick={() => {
               setPinged(id)

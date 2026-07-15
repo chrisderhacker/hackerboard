@@ -197,3 +197,46 @@
   flex: 1;
   text-align: left;
 }
+
+@media (max-width: 700px) {
+  .sidebar {
+    width: 64px;
+    flex: 0 0 64px;
+  }
+
+  .sidebar-header {
+    padding: .5rem .75rem 1rem;
+  }
+
+  .logo {
+    justify-content: center;
+  }
+
+  .logo-text,
+  .nav-label,
+  .status {
+    display: none;
+  }
+
+  .sidebar-nav {
+    padding: 0 .45rem;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: .7rem;
+  }
+
+  .nav-item.active::before {
+    left: -.45rem;
+  }
+
+  .sidebar-footer {
+    padding: .75rem .45rem .5rem;
+  }
+
+  .profile-btn {
+    justify-content: center;
+    padding: .4rem;
+  }
+}

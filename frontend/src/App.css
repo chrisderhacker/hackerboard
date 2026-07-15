@@ -220,6 +220,17 @@ body {
   gap: 1.75rem;
 }
 
+.wien-live-container {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  padding: 2rem;
+}
+
+@media (max-width: 700px) {
+  .wien-live-container { padding: 1rem; }
+}
+
 .section-header {
   display: flex;
   justify-content: space-between;

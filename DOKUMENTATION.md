@@ -16,6 +16,7 @@ Ein **kreatives Command-Center / Ideen-Board** (Huly-inspiriert). Premium-Dark-U
 - **Fortschritt & Reward**: Erledigt-Zähler für heute/Woche, offene Aufgaben sowie visueller XP-Reward mit kurzem Sound
 - **Erledigt-Workflow**: Erledigte Karten wechseln automatisch ins Archive und können dort über den reduzierten Inspector wieder in die Inbox zurückgeholt werden.
 - **Inspiration Feed**: animierte Kachel aus vorhandenen Bild-Cards; eine externe Midjourney-Anbindung benötigt später eine zulässige, stabile Datenquelle
+- **Wien Live**: eigener Dashboard-Bereich mit realen U2-Donaumarina-Abfahrten (Wiener Linien), Wetter für Donaumarina (Open-Meteo), austauschbarem Traffic-Provider und klar gekennzeichnetem Event-Mock-Provider. Alle externen Abrufe laufen über das Backend und werden serverseitig gecacht.
 - **Inspector** (rechte Spalte): Vorschau, Beschreibung, Next Step, Datum, Dateien, Links, Notizen, Checkliste, Activity
 - **Drag & Drop Upload** — Dateien reinziehen → werden zu Cards (Bild-Thumbnail), Dateien landen auf dem Server
 - **Lightbox** — Vorschaubild per Klick groß
@@ -47,6 +48,7 @@ Ein **kreatives Command-Center / Ideen-Board** (Huly-inspiriert). Premium-Dark-U
 
 - **Frontend**: React 18 + Vite + TypeScript (`frontend/src/`), Komponenten Sidebar/CommandBar/CardGrid/Card/Inspector/Lightbox, eigene SVG-Gradient-Icons, Inter-Font. Build geht nach `backend/public/`.
 - **Backend**: Fastify + TypeScript (`backend/src/server.ts`), REST-API für Cards/Files/Checklist, Datei-Upload (multipart), serviert auch das gebaute Frontend.
+- **Wien-Live-Backend**: getrennte Module unter `backend/src/wien/` für Typen, Request-Coalescing/Cache, Wiener-Linien-, Wetter-, Traffic- und Event-Provider sowie kombinierte Dashboard-Route.
 - **Datenbank**: **SQLite via Prisma** (`backend/prisma/schema.prisma`) — DB-Datei `/root/hackerboard/data/hackerboard.db`. Tags als JSON-String gespeichert.
 - **Uploads**: `/root/hackerboard/data/uploads/`, serviert unter `/uploads/`.
 
