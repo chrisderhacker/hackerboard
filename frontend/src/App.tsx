@@ -186,10 +186,7 @@ function App() {
       <main className="main-content">
         <div className="cards-container">
           <div className={`section-header ${activeSection === 'daily-spark' ? 'daily-spark-header' : ''}`}>
-            <div>
-              {activeSection === 'daily-spark' && <span className="section-eyebrow">DEIN KREATIVER MIX FÜR HEUTE</span>}
-              <h1>{activeSection === 'daily-spark' ? 'Daily Spark' : activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h1>
-            </div>
+            <h1>{activeSection === 'daily-spark' ? 'Daily Spark' : activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h1>
             <div className="filters">
               {activeSection !== 'daily-spark' && <button className="filter-chip">All</button>}
               {activeSection !== 'daily-spark' && <button className="filter-chip">Pinned</button>}

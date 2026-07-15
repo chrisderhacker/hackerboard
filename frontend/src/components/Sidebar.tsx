@@ -1,12 +1,7 @@
 import { useState } from 'react'
 import {
   InboxIcon,
-  ZapIcon,
-  BulbIcon,
-  FolderIcon,
-  FilmIcon,
   CalendarIcon,
-  UsersIcon,
   ArchiveIcon,
   BoltLogo,
 } from './Icons'
@@ -20,12 +15,7 @@ interface SidebarProps {
 export const sections = [
   { id: 'daily-spark', label: 'Daily Spark', Icon: BoltLogo },
   { id: 'inbox', label: 'Inbox', Icon: InboxIcon },
-  { id: 'next-steps', label: "What's Next", Icon: ZapIcon },
-  { id: 'ideas', label: 'Ideas', Icon: BulbIcon },
-  { id: 'projects', label: 'Projects', Icon: FolderIcon },
-  { id: 'trailers', label: 'Trailers', Icon: FilmIcon },
   { id: 'events', label: 'Events', Icon: CalendarIcon },
-  { id: 'clients', label: 'Clients', Icon: UsersIcon },
   { id: 'archive', label: 'Archive', Icon: ArchiveIcon },
 ]
 

@@ -10,7 +10,7 @@
 Ein **kreatives Command-Center / Ideen-Board** (Huly-inspiriert). Premium-Dark-UI zum visuellen Ideen-Festhalten und Next-Step-Planen.
 
 - **Cards** mit Thumbnail, Titel, Notiz, Status, Next Step, Fälligkeitsdatum, Tags, Datei-Anzahl
-- **Sektionen**: Inbox, What's Next, Ideas, Projects, Trailers, Events, Clients, Archive
+- **Hauptnavigation**: Daily Spark, Inbox, Events und Archive. Frühere Kategorien wie Ideas, Projects oder Clients werden nicht mehr als eigene Navigation geführt; solche Bedeutungen gehören künftig in Kartentypen oder Tags.
 - **Command Bar** (Cmd/Ctrl+K) zum Springen
 - **Daily Spark** als Startbereich: dichter, täglich neu mischbarer Mosaik-Mix aus Ideen, Bildern, Projekten und anstehenden Aufgaben
 - **Fortschritt & Reward**: Erledigt-Zähler für heute/Woche, offene Aufgaben sowie visueller XP-Reward mit kurzem Sound

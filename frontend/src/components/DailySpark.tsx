@@ -98,19 +98,19 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted }: Dai
         {visibleCards.map((card, index) => (
           <article
             key={card.id}
-            className={`spark-tile ${tileShapes[index % tileShapes.length]} ${card.status === 'done' ? 'is-done' : ''}`}
+            className={`spark-tile ${tileShapes[index % tileShapes.length]} poster-${index % 6} ${card.status === 'done' ? 'is-done' : ''}`}
             onClick={() => onSelectCard(card)}
           >
             <span className="spark-dot-halo" aria-hidden="true" />
             {card.thumbnail ? (
               <img src={card.thumbnail} alt="" />
             ) : (
-              <div className={`spark-art art-${index % 5}`} aria-hidden="true"><span>✦</span></div>
+              <div className={`spark-art art-${index % 5}`} aria-hidden="true"><span>{index % 3 === 0 ? '✦' : index % 3 === 1 ? '◐' : '↗'}</span></div>
             )}
             <div className="spark-tile-copy">
               <span className="spark-kind">{card.dueDate ? 'STEHT AN' : index === 0 ? 'WIEDERENTDECKT' : card.section.toUpperCase()}</span>
               <h3>{card.title}</h3>
-              {card.nextStep && <p>{card.nextStep}</p>}
+              {card.nextStep && <p>NEXT · {card.nextStep}</p>}
               <div className="spark-tile-footer">
                 <span>{card.status}</span>
                 {card.status !== 'done' && card.status !== 'archived' && (
