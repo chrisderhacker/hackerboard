@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FileIcon, XIcon, ExpandIcon } from './Icons'
 import Lightbox from './Lightbox'
 import type { Card } from '../types'
@@ -18,6 +18,7 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
   const [dueDate, setDueDate] = useState(card.dueDate?.split('T')[0] || '')
   const [saving, setSaving] = useState(false)
   const [zoomed, setZoomed] = useState(false)
+  const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const isArchived = card.section === 'archive' || card.status === 'archived' || card.status === 'done'
 
   useEffect(() => {
@@ -26,6 +27,13 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
     setNextStep(card.nextStep || '')
     setDueDate(card.dueDate?.split('T')[0] || '')
   }, [card.id])
+
+  useEffect(() => {
+    const field = descriptionRef.current
+    if (!field) return
+    field.style.height = 'auto'
+    field.style.height = `${field.scrollHeight}px`
+  }, [description])
 
   const patchCard = async (data: Record<string, unknown>) => {
     const response = await fetch(`/api/cards/${card.id}`, {
@@ -96,7 +104,7 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
 
         <div className="inspector-editor">
           <textarea className="inspector-title" value={title} onChange={(event) => setTitle(event.target.value)} rows={2} aria-label="Titel" />
-          <textarea className="inspector-description" value={description} onChange={(event) => setDescription(event.target.value)} rows={3} placeholder="Kurze Notiz …" aria-label="Beschreibung" />
+          <textarea ref={descriptionRef} className="inspector-description" value={description} onChange={(event) => setDescription(event.target.value)} rows={6} placeholder="Notiz …" aria-label="Beschreibung" />
           <div className="inspector-next">
             <span>NÄCHSTER SCHRITT</span>
             <input value={nextStep} onChange={(event) => setNextStep(event.target.value)} placeholder="Was ist der nächste Move?" />

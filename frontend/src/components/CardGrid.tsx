@@ -8,10 +8,11 @@ interface CardGridProps {
   cards: CardItem[]
   onSelectCard: (card: CardItem) => void
   onDeleteCard: (card: CardItem) => void
+  onRestoreCard?: (card: CardItem) => void
   selectedCardId?: string
 }
 
-export default function CardGrid({ cards, onSelectCard, onDeleteCard, selectedCardId }: CardGridProps) {
+export default function CardGrid({ cards, onSelectCard, onDeleteCard, onRestoreCard, selectedCardId }: CardGridProps) {
   if (cards.length === 0) {
     return (
       <div className="empty-state">
@@ -33,6 +34,7 @@ export default function CardGrid({ cards, onSelectCard, onDeleteCard, selectedCa
           isSelected={card.id === selectedCardId}
           onClick={() => onSelectCard(card)}
           onDelete={() => onDeleteCard(card)}
+          onRestore={onRestoreCard ? () => onRestoreCard(card) : undefined}
         />
       ))}
     </div>

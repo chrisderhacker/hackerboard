@@ -223,6 +223,12 @@ function App() {
                 cards={cards}
                 onSelectCard={setSelectedCard}
                 onDeleteCard={deleteCard}
+                onRestoreCard={activeSection === 'archive' ? async (card) => {
+                  const response = await fetch(`/api/cards/${card.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ section: 'inbox', status: 'inbox' }) })
+                  if (!response.ok) return
+                  setCards((current) => current.filter((item) => item.id !== card.id))
+                  if (selectedCard?.id === card.id) setSelectedCard(null)
+                } : undefined}
                 selectedCardId={selectedCard?.id}
               />
             )

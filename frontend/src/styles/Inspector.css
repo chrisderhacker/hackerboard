@@ -13,7 +13,7 @@
 .inspector-editor { display: flex; flex-direction: column; gap: .65rem; }
 .inspector-editor textarea, .inspector-editor input, .compact-field input { width: 100%; border: 0; outline: none; border-radius: 0; background: transparent; color: var(--text-primary); font-family: inherit; }
 .inspector-title { padding: .2rem 0; resize: none; font-size: 1.7rem; font-weight: 500; line-height: 1.08; letter-spacing: -.035em; }
-.inspector-description { padding: .25rem 0 .75rem; resize: vertical; border-bottom: 1px solid var(--border)!important; color: var(--text-secondary)!important; font-size: .84rem; line-height: 1.55; }
+.inspector-description { min-height: 8.5rem; padding: .25rem 0 .75rem; resize: none; overflow:hidden; border-bottom: 1px solid var(--border)!important; color: var(--text-secondary)!important; font-size: .84rem; line-height: 1.55; }
 .inspector-next { padding: .8rem .9rem; border-left: 2px solid var(--accent); background: linear-gradient(90deg, var(--accent-dim), transparent); }
 .inspector-next span { display: block; margin-bottom: .35rem; color: var(--accent); font-size: .56rem; font-weight: 600; letter-spacing: .14em; }
 .inspector-next input { font-size: .83rem; }

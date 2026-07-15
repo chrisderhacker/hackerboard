@@ -107,7 +107,7 @@
   opacity: 0;
 }
 
-.card-delete-btn {
+.card-delete-btn,.card-restore-btn {
   position: absolute;
   top: 0.6rem;
   right: 0.6rem;
@@ -127,7 +127,7 @@
   transition: all 0.2s ease;
 }
 
-.card:hover .card-delete-btn {
+.card:hover .card-delete-btn,.card:hover .card-restore-btn {
   opacity: 1;
   transform: scale(1);
 }
@@ -137,6 +137,8 @@
   border-color: rgba(239, 68, 68, 0.6);
   box-shadow: 0 0 16px rgba(239, 68, 68, 0.25);
 }
+.card-restore-btn:hover{color:var(--accent);border-color:var(--accent);background:rgba(204,255,0,.1);box-shadow:0 0 18px rgba(204,255,0,.18)}
+.card-restore-btn{opacity:1;transform:scale(1);color:var(--accent)}
 
 /* Halftone dots along the inner edge — contained inside the card */
 .card-halo {

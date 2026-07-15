@@ -7,9 +7,10 @@ interface CardProps {
   isSelected: boolean
   onClick: () => void
   onDelete: () => void
+  onRestore?: () => void
 }
 
-export default function Card({ card, isSelected, onClick, onDelete }: CardProps) {
+export default function Card({ card, isSelected, onClick, onDelete, onRestore }: CardProps) {
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       inbox: '#ccff00',
@@ -35,14 +36,16 @@ export default function Card({ card, isSelected, onClick, onDelete }: CardProps)
     >
       <span className="card-halo" aria-hidden="true" />
       <button
-        className="card-delete-btn"
-        title="Card löschen"
+        className={onRestore ? 'card-restore-btn' : 'card-delete-btn'}
+        aria-label={onRestore ? 'Card wiederherstellen' : 'Card löschen'}
+        title={onRestore ? 'Mit einem Klick wiederherstellen' : 'Card löschen'}
         onClick={(e) => {
           e.stopPropagation()
-          onDelete()
+          if (onRestore) onRestore()
+          else onDelete()
         }}
       >
-        <TrashIcon size={14} />
+        {onRestore ? <span aria-hidden="true">↩</span> : <TrashIcon size={14} />}
       </button>
 
       {card.thumbnail && (

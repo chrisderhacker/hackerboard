@@ -109,3 +109,5 @@ Der ältere Ordner `./files/` ist nur noch eine historische Projektkopie und dar
 - Der Vollbild-Button zeigt nur die Übersicht. `Esc` beendet den Vollbildmodus.
 - Übersichtskacheln haben keine permanente Kontur. Hover und Auswahl verwenden den animierten Lime-Glow der Inbox.
 - Bildinhalte werden innerhalb der jeweiligen Kachel beschnitten und können nicht in Nachbarkacheln ragen.
+- Archiv-Karten lassen sich über den sichtbaren ↩-Button direkt in die Inbox wiederherstellen.
+- Lange Notizen wachsen im Inspector mit ihrem Inhalt; lange Kacheltitel werden kleiner gesetzt und auf mehr Zeilen verteilt.
