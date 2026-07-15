@@ -193,7 +193,7 @@ function App() {
       />
 
       <main className="main-content">
-        {activeSection === 'wien-live' ? <div className="wien-live-container"><WienLiveDashboard /></div> : <div className="cards-container">
+        {activeSection === 'wien-live' ? <div className="wien-live-container"><WienLiveDashboard /></div> : <div className={`cards-container ${activeSection === 'daily-spark' ? 'overview-container' : ''}`}>
           {activeSection !== 'daily-spark' && <div className="section-header">
             <h1>{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h1>
             <div className="filters">
