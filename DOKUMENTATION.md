@@ -49,6 +49,7 @@ Ein **kreatives Command-Center / Ideen-Board** (Huly-inspiriert). Premium-Dark-U
 - **Frontend**: React 18 + Vite + TypeScript (`frontend/src/`), Komponenten Sidebar/CommandBar/CardGrid/Card/Inspector/Lightbox, eigene SVG-Gradient-Icons, Inter-Font. Build geht nach `backend/public/`.
 - **Backend**: Fastify + TypeScript (`backend/src/server.ts`), REST-API für Cards/Files/Checklist, Datei-Upload (multipart), serviert auch das gebaute Frontend.
 - **Wien-Live-Backend**: getrennte Module unter `backend/src/wien/` für Typen, Request-Coalescing/Cache, Wiener-Linien-, Wetter-, Traffic- und Event-Provider sowie kombinierte Dashboard-Route.
+- **Daily Spark Live-Kacheln**: Die Hauptseite zeigt U2 Donaumarina und Wetter Wien direkt im Mosaik. Beide verwenden dieselben gecachten Backend-Routen wie „Wien Live“ und aktualisieren sich alle 30 Sekunden fehlertolerant.
 - **Datenbank**: **SQLite via Prisma** (`backend/prisma/schema.prisma`) — DB-Datei `/root/hackerboard/data/hackerboard.db`. Tags als JSON-String gespeichert.
 - **Uploads**: `/root/hackerboard/data/uploads/`, serviert unter `/uploads/`.
 - **Google Traffic**: Fahrzeiten kommen serverseitig über die Routes API und werden drei Minuten gecacht. Die Karte nutzt Maps JavaScript plus Traffic Layer. Der separate Browser-Key muss auf `https://board.derhacker.com/*` eingeschränkt werden.

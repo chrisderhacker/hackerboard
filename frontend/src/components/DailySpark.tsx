@@ -1,5 +1,7 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Card } from '../types'
+import type { TransitData, WeatherData } from './wien-live/types'
+import { DailyTransitTile, DailyWeatherTile } from './DailyLiveTiles'
 import '../styles/DailySpark.css'
 
 interface DailySparkProps {
@@ -49,6 +51,13 @@ function isWithinDays(value: string | undefined, days: number) {
 export default function DailySpark({ cards, onSelectCard, onCardCompleted, selectedCardId }: DailySparkProps) {
   const [shuffleSeed, setShuffleSeed] = useState(0)
   const [reward, setReward] = useState<string | null>(null)
+  const [transit,setTransit]=useState<TransitData>()
+  const [weather,setWeather]=useState<WeatherData>()
+  const [liveLoading,setLiveLoading]=useState(true)
+  const [liveError,setLiveError]=useState<string|null>(null)
+
+  const refreshLive=useCallback(async(signal?:AbortSignal)=>{try{setLiveError(null);const [transitResponse,weatherResponse]=await Promise.all([fetch('/api/wien/transit/departures?diva=60200282&line=U2',{signal}),fetch('/api/wien/weather?lat=48.2061223&lon=16.4309681',{signal})]);if(!transitResponse.ok||!weatherResponse.ok)throw new Error('Live-Daten derzeit nicht erreichbar');const [nextTransit,nextWeather]=await Promise.all([transitResponse.json(),weatherResponse.json()]);setTransit(nextTransit);setWeather(nextWeather)}catch(reason){if((reason as Error).name!=='AbortError')setLiveError((reason as Error).message)}finally{setLiveLoading(false)}},[])
+  useEffect(()=>{const controller=new AbortController();refreshLive(controller.signal);const timer=window.setInterval(()=>refreshLive(),30_000);return()=>{controller.abort();window.clearInterval(timer)}},[refreshLive])
 
   const visibleCards = useMemo(() => {
     const ranked = cards.filter((card) => card.section !== 'archive' && card.status !== 'done' && card.status !== 'archived').sort((a, b) => {
@@ -96,6 +105,8 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
       </div>
 
       <div className="spark-mosaic">
+        <DailyTransitTile data={transit} loading={liveLoading&&!transit} error={!transit?liveError:null}/>
+        <DailyWeatherTile data={weather} loading={liveLoading&&!weather} error={!weather?liveError:null}/>
         {visibleCards.map((card, index) => (
           <article
             key={card.id}

@@ -20,6 +20,7 @@
 ## Neue Frontend-Dateien
 
 - `frontend/src/components/wien-live/WienLiveDashboard.tsx` — Datenabruf, Auto-Refresh, Offline- und Stale-Verhalten.
+- `frontend/src/components/DailyLiveTiles.tsx` — kompakte U2- und Wetter-Livekacheln für die Daily-Spark-Hauptseite.
 - `TransitTile.tsx`, `TrafficTile.tsx`, `WeatherTile.tsx`, `EventsTile.tsx` — unabhängige Kacheln mit eigenen Zuständen.
 - `WienSettingsPanel.tsx` — Favoriten, Route, Wetter, Events und Darstellung; Speicherung in `localStorage`.
 - `TileState.tsx`, `types.ts` — gemeinsame Zustände und Frontendmodelle.
