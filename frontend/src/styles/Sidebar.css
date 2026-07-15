@@ -47,6 +47,22 @@
   padding: 0 0.65rem;
 }
 
+.sidebar-create {
+  display:flex;
+  align-items:center;
+  gap:.65rem;
+  margin:0 0 .65rem;
+  padding:.7rem .8rem;
+  border:1px solid var(--accent);
+  border-radius:var(--radius-sm);
+  background:var(--accent);
+  color:#10130b;
+  cursor:pointer;
+  text-align:left;
+}
+.sidebar-create span{font-size:1.05rem;line-height:1}.sidebar-create b{font-size:.78rem;font-weight:600}
+.sidebar-create:hover{background:var(--accent-hover);box-shadow:0 0 22px rgba(204,255,0,.2)}
+
 .nav-item {
   display: flex;
   align-items: center;
@@ -226,6 +242,8 @@
     justify-content: center;
     padding: .7rem;
   }
+
+  .sidebar-create{justify-content:center;padding:.7rem}.sidebar-create b{display:none}
 
   .nav-item.active::before {
     left: -.45rem;

@@ -182,21 +182,22 @@ function App() {
       <Sidebar
         activeSection={activeSection}
         onSectionChange={(section) => { setActiveSection(section); setSelectedCard(null) }}
+        onCreateCard={createEmptyCard}
       />
 
       <main className="main-content">
         {activeSection === 'wien-live' ? <div className="wien-live-container"><WienLiveDashboard /></div> : <div className="cards-container">
-          <div className={`section-header ${activeSection === 'daily-spark' ? 'daily-spark-header' : ''}`}>
-            <h1>{activeSection === 'daily-spark' ? 'Daily Spark' : activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h1>
+          {activeSection !== 'daily-spark' && <div className="section-header">
+            <h1>{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h1>
             <div className="filters">
-              {activeSection !== 'daily-spark' && <button className="filter-chip">All</button>}
-              {activeSection !== 'daily-spark' && <button className="filter-chip">Pinned</button>}
-              {activeSection !== 'daily-spark' && <button className="filter-chip">Due Soon</button>}
+              <button className="filter-chip">All</button>
+              <button className="filter-chip">Pinned</button>
+              <button className="filter-chip">Due Soon</button>
               <button className="new-card-btn" onClick={createEmptyCard}>
-                + {activeSection === 'daily-spark' ? 'Idee parken' : 'Neue Card'}
+                + Neue Card
               </button>
             </div>
-          </div>
+          </div>}
 
           {loading ? (
             <div className="loading">Loading...</div>

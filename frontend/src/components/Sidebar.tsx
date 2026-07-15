@@ -11,17 +11,18 @@ import '../styles/Sidebar.css'
 interface SidebarProps {
   activeSection: string
   onSectionChange: (section: string) => void
+  onCreateCard: () => void
 }
 
 export const sections = [
-  { id: 'daily-spark', label: 'Daily Spark', Icon: BoltLogo },
+  { id: 'daily-spark', label: 'Übersicht', Icon: BoltLogo },
   { id: 'wien-live', label: 'Wien Live', Icon: ZapIcon },
   { id: 'inbox', label: 'Inbox', Icon: InboxIcon },
   { id: 'events', label: 'Events', Icon: CalendarIcon },
   { id: 'archive', label: 'Archive', Icon: ArchiveIcon },
 ]
 
-export default function Sidebar({ activeSection, onSectionChange }: SidebarProps) {
+export default function Sidebar({ activeSection, onSectionChange, onCreateCard }: SidebarProps) {
   const [pinged, setPinged] = useState<string | null>(null)
 
   return (
@@ -34,6 +35,7 @@ export default function Sidebar({ activeSection, onSectionChange }: SidebarProps
       </div>
 
       <nav className="sidebar-nav">
+        <button className="sidebar-create" onClick={onCreateCard} aria-label="Idee parken" title="Idee parken"><span>＋</span><b>Idee parken</b></button>
         {sections.map(({ id, label, Icon }) => (
           <button
             key={id}

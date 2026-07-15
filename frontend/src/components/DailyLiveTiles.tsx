@@ -4,7 +4,7 @@ const clock = (value:string|null) => value ? new Intl.DateTimeFormat('de-AT',{ti
 const weatherIcons:Record<number,string>={0:'☀',1:'◒',2:'◒',3:'☁',45:'≋',48:'≋',51:'☂',53:'☂',55:'☂',61:'☂',63:'☂',65:'☂',71:'❄',73:'❄',75:'❄',80:'☂',81:'☂',82:'☂',95:'ϟ',96:'ϟ',99:'ϟ'}
 
 export function DailyTransitTile({data,loading,error}:{data?:TransitData;loading:boolean;error:string|null}) {
-  return <article className="spark-tile spark-live-transit feature">
+  return <article className="spark-tile spark-live-transit wide">
     <div className="daily-live-head"><span>JETZT · DONAUMARINA</span><b>U2 LIVE</b></div>
     {loading&&<div className="daily-live-state">Abfahrten werden geladen …</div>}
     {error&&<div className="daily-live-state error">⚠ {error}</div>}
