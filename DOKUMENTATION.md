@@ -111,3 +111,4 @@ Der ältere Ordner `./files/` ist nur noch eine historische Projektkopie und dar
 - Bildinhalte werden innerhalb der jeweiligen Kachel beschnitten und können nicht in Nachbarkacheln ragen.
 - Archiv-Karten lassen sich über den sichtbaren ↩-Button direkt in die Inbox wiederherstellen.
 - Lange Notizen wachsen im Inspector mit ihrem Inhalt; lange Kacheltitel werden kleiner gesetzt und auf mehr Zeilen verteilt.
+- Im Karten-Editor können Bilder direkt hinzugefügt oder ersetzt werden; sie laufen über die bestehende `/api/cards/:id/files`-Uploadroute.

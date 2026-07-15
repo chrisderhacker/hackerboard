@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { FileIcon, XIcon, ExpandIcon } from './Icons'
+import { FileIcon, XIcon, ExpandIcon, UploadIcon } from './Icons'
 import Lightbox from './Lightbox'
 import type { Card } from '../types'
 import '../styles/Inspector.css'
@@ -18,7 +18,9 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
   const [dueDate, setDueDate] = useState(card.dueDate?.split('T')[0] || '')
   const [saving, setSaving] = useState(false)
   const [zoomed, setZoomed] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
+  const imageInputRef = useRef<HTMLInputElement>(null)
   const isArchived = card.section === 'archive' || card.status === 'archived' || card.status === 'done'
 
   useEffect(() => {
@@ -87,6 +89,23 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
     }
   }
 
+  const handleImageUpload = async (file?: File) => {
+    if (!file) return
+    try {
+      setUploadingImage(true)
+      const formData = new FormData()
+      formData.append('file', file)
+      const response = await fetch(`/api/cards/${card.id}/files`, { method: 'POST', body: formData })
+      if (!response.ok) throw new Error(`API ${response.status}`)
+      onUpdate(await response.json())
+    } catch (error) {
+      console.error('Bild-Upload fehlgeschlagen:', error)
+    } finally {
+      setUploadingImage(false)
+      if (imageInputRef.current) imageInputRef.current.value = ''
+    }
+  }
+
   return (
     <aside className="inspector">
       <div className="inspector-header">
@@ -95,12 +114,16 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
       </div>
 
       <div className="inspector-content">
-        {card.thumbnail && (
-          <button className="inspector-preview" onClick={() => setZoomed(true)}>
+        <div className={`inspector-media ${card.thumbnail ? 'has-image' : ''}`}>
+          {card.thumbnail ? <button className="inspector-preview" onClick={() => setZoomed(true)}>
             <img src={card.thumbnail} alt={card.title} />
             <span className="zoom-hint"><ExpandIcon size={12} /> Vergrößern</span>
-          </button>
-        )}
+          </button> : <button className="inspector-upload-empty" onClick={() => imageInputRef.current?.click()} disabled={uploadingImage}>
+            <UploadIcon size={20} /><span>{uploadingImage ? 'Bild wird geladen…' : 'Bild hinzufügen'}</span><small>JPG, PNG, WebP oder GIF</small>
+          </button>}
+          {card.thumbnail && <button className="inspector-replace-image" onClick={() => imageInputRef.current?.click()} disabled={uploadingImage}><UploadIcon size={12} /> {uploadingImage ? 'Lädt…' : 'Bild ersetzen'}</button>}
+          <input ref={imageInputRef} className="visually-hidden-image-input" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => handleImageUpload(event.target.files?.[0])} aria-label="Bilddatei auswählen" />
+        </div>
 
         <div className="inspector-editor">
           <textarea className="inspector-title" value={title} onChange={(event) => setTitle(event.target.value)} rows={2} aria-label="Titel" />
