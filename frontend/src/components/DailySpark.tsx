@@ -57,7 +57,7 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const [liveError,setLiveError]=useState<string|null>(null)
   const [imageShapes,setImageShapes]=useState<Record<string,'standard'|'wide'|'portrait'>>({})
   const [deckSeed,setDeckSeed]=useState(()=>Date.now())
-  const [slidePage,setSlidePage]=useState(0)
+  const [rotationStep,setRotationStep]=useState(0)
   const [pageSize,setPageSize]=useState(()=>window.innerWidth>1200?5:window.innerWidth>760?4:2)
 
   const refreshLive=useCallback(async(signal?:AbortSignal)=>{try{setLiveError(null);const [transitResponse,weatherResponse]=await Promise.all([fetch('/api/wien/transit/departures?diva=60200282&line=U2',{signal}),fetch('/api/wien/weather?lat=48.2061223&lon=16.4309681',{signal})]);if(!transitResponse.ok||!weatherResponse.ok)throw new Error('Live-Daten derzeit nicht erreichbar');const [nextTransit,nextWeather]=await Promise.all([transitResponse.json(),weatherResponse.json()]);setTransit(nextTransit);setWeather(nextWeather)}catch(reason){if((reason as Error).name!=='AbortError')setLiveError((reason as Error).message)}finally{setLiveLoading(false)}},[])
@@ -82,11 +82,10 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const doneWeek = cards.filter((card) => card.status === 'done' && isWithinDays(card.updatedAt, 7)).length
   const open = cards.filter((card) => card.status !== 'done' && card.status !== 'archived').length
   const deck=useMemo(()=>['transit','weather',...visibleCards.map(card=>`card:${card.id}`),'feed'].map((id,index)=>({id,order:Math.sin(deckSeed*.0001+index*91.7)})).sort((a,b)=>a.order-b.order).map(item=>item.id),[visibleCards,deckSeed])
-  const pageCount=Math.max(1,Math.ceil(deck.length/pageSize))
-  const currentItems=deck.slice((slidePage%pageCount)*pageSize,(slidePage%pageCount+1)*pageSize)
+  const currentItems=useMemo(()=>{const visible=deck.slice(0,pageSize);for(let index=0;index<rotationStep;index++){if(deck.length<=pageSize)break;visible[index%pageSize]=deck[(pageSize+index)%deck.length]}return visible},[deck,pageSize,rotationStep])
   const currentSet=new Set(currentItems)
-  useEffect(()=>{setSlidePage(0)},[pageSize,deckSeed])
-  useEffect(()=>{if(selectedCardId||pageCount<2)return;const timer=window.setInterval(()=>setSlidePage(current=>{if(current+1>=pageCount){setDeckSeed(Date.now());return 0}return current+1}),10_000);return()=>window.clearInterval(timer)},[pageCount,selectedCardId])
+  useEffect(()=>{setRotationStep(0)},[pageSize,deckSeed])
+  useEffect(()=>{if(selectedCardId||deck.length<=pageSize)return;const timer=window.setInterval(()=>setRotationStep(current=>{if(current+1>=deck.length){setDeckSeed(Date.now());return 0}return current+1}),30_000);return()=>window.clearInterval(timer)},[deck.length,pageSize,selectedCardId])
 
   const completeCard = async (event: React.MouseEvent, card: Card) => {
     event.stopPropagation()
@@ -111,10 +110,10 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
         <div><span>DIESE WOCHE</span><strong>{doneWeek} erledigt</strong></div>
         <div><span>NOCH OFFEN</span><strong>{open} Aufgaben</strong></div>
         <div className="streak"><span>CREATIVE STREAK</span><strong>⚡ Weiter so</strong></div>
-        <button className="shuffle-button" onClick={() => {const seed=Date.now();setShuffleSeed(seed);setDeckSeed(seed);setSlidePage(0);setLiveLoading(true);refreshLive()}}>✦ Neu mischen</button>
+        <button className="shuffle-button" onClick={() => {const seed=Date.now();setShuffleSeed(seed);setDeckSeed(seed);setRotationStep(0);setLiveLoading(true);refreshLive()}}>✦ Neu mischen</button>
       </div>
 
-      <div className={`spark-mosaic screen-transition transition-${slidePage%3}`} key={`${deckSeed}-${slidePage}-${pageSize}`}>
+      <div className="spark-mosaic living-mosaic">
         {currentSet.has('transit') && (
           <DailyTransitTile data={transit} loading={liveLoading&&!transit} error={!transit?liveError:null} order={currentItems.indexOf('transit')}/>
         )}
@@ -161,7 +160,6 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
         </a>}
       </div>
 
-      {pageCount>1&&<nav className="spark-pages" aria-label="Übersichtsseiten">{Array.from({length:pageCount}).map((_,index)=><button key={index} className={index===slidePage%pageCount?'active':''} onClick={()=>setSlidePage(index)} aria-label={`Seite ${index+1} anzeigen`}><span/></button>)}</nav>}
 
       <div className={`reward-toast ${reward ? 'show' : ''}`} role="status" aria-live="polite">
         <span>✦</span><div><small>ERLEDIGT · +25 XP</small><strong>{reward}</strong><p>Momentum aufgebaut!</p></div>
