@@ -42,6 +42,7 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
     try {
       setSaving(true)
       await patchCard({ title, description, nextStep, dueDate: dueDate || null })
+      onClose()
     } catch (error) {
       console.error('Failed to update card:', error)
     } finally {
@@ -52,6 +53,7 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
   const handleArchive = async () => {
     try {
       await patchCard({ section: 'archive', status: 'done' })
+      onClose()
     } catch (error) {
       console.error('Failed to archive card:', error)
     }
@@ -60,6 +62,7 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
   const handleRestore = async () => {
     try {
       await patchCard({ section: 'inbox', status: 'inbox' })
+      onClose()
     } catch (error) {
       console.error('Failed to restore card:', error)
     }

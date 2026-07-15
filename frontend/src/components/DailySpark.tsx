@@ -55,11 +55,9 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const [weather,setWeather]=useState<WeatherData>()
   const [liveLoading,setLiveLoading]=useState(true)
   const [liveError,setLiveError]=useState<string|null>(null)
-  const [feedOffset,setFeedOffset]=useState(0)
 
   const refreshLive=useCallback(async(signal?:AbortSignal)=>{try{setLiveError(null);const [transitResponse,weatherResponse]=await Promise.all([fetch('/api/wien/transit/departures?diva=60200282&line=U2',{signal}),fetch('/api/wien/weather?lat=48.2061223&lon=16.4309681',{signal})]);if(!transitResponse.ok||!weatherResponse.ok)throw new Error('Live-Daten derzeit nicht erreichbar');const [nextTransit,nextWeather]=await Promise.all([transitResponse.json(),weatherResponse.json()]);setTransit(nextTransit);setWeather(nextWeather)}catch(reason){if((reason as Error).name!=='AbortError')setLiveError((reason as Error).message)}finally{setLiveLoading(false)}},[])
   useEffect(()=>{const controller=new AbortController();refreshLive(controller.signal);const timer=window.setInterval(()=>refreshLive(),30_000);return()=>{controller.abort();window.clearInterval(timer)}},[refreshLive])
-  useEffect(()=>{const timer=window.setInterval(()=>setFeedOffset(value=>value+1),3600);return()=>window.clearInterval(timer)},[])
 
   const visibleCards = useMemo(() => {
     const ranked = cards.filter((card) => card.section !== 'archive' && card.status !== 'done' && card.status !== 'archived').sort((a, b) => {
@@ -78,8 +76,6 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const doneToday = cards.filter((card) => card.status === 'done' && isSameDay(card.updatedAt)).length
   const doneWeek = cards.filter((card) => card.status === 'done' && isWithinDays(card.updatedAt, 7)).length
   const open = cards.filter((card) => card.status !== 'done' && card.status !== 'archived').length
-  const images = cards.filter((card) => card.thumbnail).slice(0, 6)
-  const feedImages=images.length?images.map((_,index)=>images[(index+feedOffset)%images.length]):[]
   const mixedOrder=(index:number)=>shuffleSeed===0?index:(index*37+shuffleSeed)%101
 
   const completeCard = async (event: React.MouseEvent, card: Card) => {
@@ -142,9 +138,7 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
 
         <a className="spark-tile inspiration-feed" style={{order:mixedOrder(visibleCards.length+2)}} href="https://www.midjourney.com/explore?tab=top" target="_blank" rel="noreferrer" aria-label="Midjourney Explore öffnen">
           <div className="feed-grid">
-            {feedImages.length > 0 ? feedImages.map((card,index) => <img key={`${card.id}-${feedOffset}-${index}`} src={card.thumbnail} alt="" />) : (
-              Array.from({ length: 6 }).map((_, index) => <i key={index} className={`feed-placeholder feed-${index}`} />)
-            )}
+            {Array.from({ length: 6 }).map((_, index) => <i key={index} className={`feed-placeholder feed-${index}`} />)}
           </div>
           <div className="feed-label"><span>MIDJOURNEY EXPLORE</span><strong>Top öffnen ↗</strong></div>
         </a>
