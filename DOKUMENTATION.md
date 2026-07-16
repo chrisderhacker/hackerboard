@@ -121,3 +121,5 @@ Der ältere Ordner `./files/` ist nur noch eine historische Projektkopie und dar
 - Bewegt sich der Zeiger in Richtung eines Board-Randes, fährt das Infinite-Board dort langsam weiter.
 - Der Fokusmodus zeigt Bild und alle wesentlichen Kartendetails direkt; ein zusätzlicher Details-Schritt entfällt.
 - Das magnetische Einrasten wird nach einer kurzen Ruhephase per sanfter Scroll-Animation ausgeführt statt durch abruptes CSS-Snapping.
+- Manuelles Scrollen wird erst nahe den unsichtbaren Außenkopien re-zentriert; das verhindert Sprünge beim Scrollen nach oben.
+- Nach 10 Sekunden ohne Eingabe beginnt ein sehr langsamer Screensaver-Drift. Seine Richtung wechselt weich alle 7–16 Sekunden; bei reduzierter Bewegung ist er deaktiviert.
