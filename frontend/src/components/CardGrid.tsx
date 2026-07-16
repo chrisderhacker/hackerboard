@@ -10,9 +10,10 @@ interface CardGridProps {
   onDeleteCard: (card: CardItem) => void
   onRestoreCard?: (card: CardItem) => void
   selectedCardId?: string
+  density?: number
 }
 
-export default function CardGrid({ cards, onSelectCard, onDeleteCard, onRestoreCard, selectedCardId }: CardGridProps) {
+export default function CardGrid({ cards, onSelectCard, onDeleteCard, onRestoreCard, selectedCardId, density }: CardGridProps) {
   if (cards.length === 0) {
     return (
       <div className="empty-state">
@@ -26,7 +27,7 @@ export default function CardGrid({ cards, onSelectCard, onDeleteCard, onRestoreC
   }
 
   return (
-    <div className="card-grid">
+    <div className={`card-grid${density !== undefined ? ` density-${density}` : ''}`}>
       {cards.map((card) => (
         <Card
           key={card.id}

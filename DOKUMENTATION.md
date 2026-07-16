@@ -123,3 +123,4 @@ Der ältere Ordner `./files/` ist nur noch eine historische Projektkopie und dar
 - Das magnetische Einrasten wird nach einer kurzen Ruhephase per sanfter Scroll-Animation ausgeführt statt durch abruptes CSS-Snapping.
 - Manuelles Scrollen wird erst nahe den unsichtbaren Außenkopien re-zentriert; das verhindert Sprünge beim Scrollen nach oben.
 - Nach 10 Sekunden ohne Eingabe beginnt ein sehr langsamer Screensaver-Drift. Seine Richtung wechselt weich alle 7–16 Sekunden; bei reduzierter Bewegung ist er deaktiviert.
+- Die Inbox besitzt im Kopfbereich einen Ansichtsregler von „Liste“ bis „Boxen“. Fünf Stufen verändern Raster, Bildgröße und sichtbare Informationsdichte; die Auswahl wird lokal im Browser gespeichert und beeinflusst Archiv sowie Events nicht.

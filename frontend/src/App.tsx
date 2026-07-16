@@ -17,6 +17,10 @@ function App() {
   const [showCommandBar, setShowCommandBar] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem('hackerboard.sidebarCollapsed') === 'true')
+  const [inboxDensity, setInboxDensity] = useState(() => {
+    const saved = Number(localStorage.getItem('hackerboard.inboxDensity'))
+    return Number.isInteger(saved) && saved >= 0 && saved <= 4 ? saved : 3
+  })
   const dragDepth = useRef(0)
 
   useEffect(() => {
@@ -197,6 +201,27 @@ function App() {
           {activeSection !== 'daily-spark' && <div className="section-header">
             <h1>{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)}</h1>
             <div className="filters">
+              {activeSection === 'inbox' && (
+                <label className="view-density" title="Inbox-Ansicht anpassen">
+                  <span className="view-density-label">Liste</span>
+                  <span className="view-density-list-icon" aria-hidden="true"><i /><i /><i /></span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="4"
+                    step="1"
+                    value={inboxDensity}
+                    aria-label="Inbox-Ansicht von Liste bis große Boxen"
+                    onChange={(event) => {
+                      const value = Number(event.target.value)
+                      setInboxDensity(value)
+                      localStorage.setItem('hackerboard.inboxDensity', String(value))
+                    }}
+                  />
+                  <span className="view-density-grid-icon" aria-hidden="true"><i /><i /><i /><i /></span>
+                  <span className="view-density-label">Boxen</span>
+                </label>
+              )}
               <button className="filter-chip">All</button>
               <button className="filter-chip">Pinned</button>
               <button className="filter-chip">Due Soon</button>
@@ -230,6 +255,7 @@ function App() {
                   if (selectedCard?.id === card.id) setSelectedCard(null)
                 } : undefined}
                 selectedCardId={selectedCard?.id}
+                density={activeSection === 'inbox' ? inboxDensity : undefined}
               />
             )
           )}

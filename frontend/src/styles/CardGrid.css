@@ -1,20 +1,22 @@
 .card-grid {
+  --card-min: 280px;
+  --card-gap: 1.1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.1rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--card-min)), 1fr));
+  gap: var(--card-gap);
   animation: grid-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: gap 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@media (max-width: 1400px) {
-  .card-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  }
-}
+.card-grid.density-0 { --card-min: 100%; --card-gap: 0.45rem; }
+.card-grid.density-1 { --card-min: 190px; --card-gap: 0.65rem; }
+.card-grid.density-2 { --card-min: 235px; --card-gap: 0.8rem; }
+.card-grid.density-3 { --card-min: 290px; --card-gap: 1rem; }
+.card-grid.density-4 { --card-min: 390px; --card-gap: 1.15rem; }
 
 @media (max-width: 900px) {
   .card-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 0.75rem;
+    --card-gap: 0.75rem;
   }
 }
 
