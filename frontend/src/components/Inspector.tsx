@@ -20,6 +20,9 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
   const [saving, setSaving] = useState(false)
   const [zoomed, setZoomed] = useState(false)
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [linkTitle, setLinkTitle] = useState('')
+  const [linkUrl, setLinkUrl] = useState('')
+  const [savingLink, setSavingLink] = useState(false)
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const imageInputRef = useRef<HTMLInputElement>(null)
   const isArchived = card.section === 'archive' || card.status === 'archived' || card.status === 'done'
@@ -108,6 +111,27 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
     }
   }
 
+  const handleAddLink = async () => {
+    if (!linkUrl.trim()) return
+    try {
+      setSavingLink(true)
+      const response = await fetch(`/api/cards/${card.id}/links`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: linkTitle, url: linkUrl }) })
+      if (!response.ok) throw new Error(`API ${response.status}`)
+      onUpdate(await response.json())
+      setLinkTitle('')
+      setLinkUrl('')
+    } catch (error) {
+      console.error('Link konnte nicht gespeichert werden:', error)
+    } finally {
+      setSavingLink(false)
+    }
+  }
+
+  const handleDeleteLink = async (linkId: string) => {
+    const response = await fetch(`/api/links/${linkId}`, { method: 'DELETE' })
+    if (response.ok) onUpdate(await response.json())
+  }
+
   return (
     <aside className="inspector">
       <div className="inspector-header">
@@ -143,6 +167,13 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
             <button className={priority === 'high' ? 'active high' : ''} onClick={() => setPriority('high')}>● Wichtig</button>
             <button className={priority === 'urgent' ? 'active urgent' : ''} onClick={() => setPriority('urgent')}>● Jetzt</button>
           </div>
+        </div>
+
+        <div className="inspector-links">
+          <span>LINKS</span>
+          {card.links?.map(link => <div className="saved-link" key={link.id}><a href={link.url} target="_blank" rel="noreferrer">{link.title || new URL(link.url).hostname}</a><button onClick={() => handleDeleteLink(link.id)} aria-label="Link entfernen">×</button></div>)}
+          <div className="link-fields"><input value={linkTitle} onChange={event => setLinkTitle(event.target.value)} placeholder="Titel (optional)" aria-label="Linktitel" /><input value={linkUrl} onChange={event => setLinkUrl(event.target.value)} placeholder="https://…" aria-label="Linkadresse" onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); handleAddLink() } }} /></div>
+          <button className="add-link-button" onClick={handleAddLink} disabled={!linkUrl.trim() || savingLink}>{savingLink ? 'Speichert…' : '+ Link hinzufügen'}</button>
         </div>
 
         <details className="inspector-more">

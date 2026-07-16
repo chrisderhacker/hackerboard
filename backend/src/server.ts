@@ -139,6 +139,32 @@ fastify.delete('/api/cards/:id', async (request: any, reply) => {
   }
 })
 
+fastify.post('/api/cards/:id/links', async (request: any, reply) => {
+  const card = await prisma.card.findUnique({ where: { id: request.params.id } })
+  if (!card) return reply.code(404).send({ error: 'Card not found' })
+  const rawUrl = typeof request.body?.url === 'string' ? request.body.url.trim() : ''
+  const url = /^https?:\/\//i.test(rawUrl) ? rawUrl : `https://${rawUrl}`
+  try {
+    const parsed = new URL(url)
+    if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error('invalid protocol')
+  } catch {
+    return reply.code(400).send({ error: 'valid URL is required' })
+  }
+  await prisma.link.create({ data: { cardId: card.id, url, title: typeof request.body?.title === 'string' ? request.body.title.trim().slice(0, 120) || null : null } })
+  const updated = await prisma.card.findUnique({ where: { id: card.id }, include: cardInclude })
+  return parseCard(updated!)
+})
+
+fastify.delete('/api/links/:id', async (request: any, reply) => {
+  try {
+    const link = await prisma.link.delete({ where: { id: request.params.id } })
+    const updated = await prisma.card.findUnique({ where: { id: link.cardId }, include: cardInclude })
+    return updated ? parseCard(updated) : { deleted: true }
+  } catch {
+    return reply.code(404).send({ error: 'Link not found' })
+  }
+})
+
 // File upload — multipart, stores on disk, first image becomes the thumbnail
 fastify.post('/api/cards/:id/files', async (request: any, reply) => {
   const card = await prisma.card.findUnique({ where: { id: request.params.id } })

@@ -69,11 +69,15 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const [now,setNow]=useState(()=>new Date())
   const [isFullscreen,setIsFullscreen]=useState(false)
   const [focusMode,setFocusMode]=useState(false)
+  const [hoveredCardId,setHoveredCardId]=useState<string|null>(null)
   const infiniteBoardRef=useRef<HTMLDivElement>(null)
   const dailySparkRef=useRef<HTMLDivElement>(null)
+  const hoveredCardRef=useRef<string|null>(null)
+  const panVelocityRef=useRef({x:0,y:0})
 
   useEffect(()=>{const timer=window.setInterval(()=>setNow(new Date()),1_000);const handleFullscreen=()=>setIsFullscreen(document.fullscreenElement===dailySparkRef.current);document.addEventListener('fullscreenchange',handleFullscreen);return()=>{window.clearInterval(timer);document.removeEventListener('fullscreenchange',handleFullscreen)}},[])
   useEffect(()=>{const handleFocusKey=(event:KeyboardEvent)=>{const target=event.target as HTMLElement;if(target.matches('input, textarea, select, [contenteditable="true"]'))return;if(event.key.toLowerCase()==='f'){event.preventDefault();setFocusMode(current=>!current)}else if(event.key==='Escape')setFocusMode(false)};window.addEventListener('keydown',handleFocusKey);return()=>window.removeEventListener('keydown',handleFocusKey)},[])
+  useEffect(()=>{let frame=0;const pan=()=>{const board=infiniteBoardRef.current;const velocity=panVelocityRef.current;if(board&&!focusMode&&(velocity.x||velocity.y)){board.scrollLeft+=velocity.x;board.scrollTop+=velocity.y}frame=requestAnimationFrame(pan)};frame=requestAnimationFrame(pan);return()=>cancelAnimationFrame(frame)},[focusMode])
 
   const refreshLive=useCallback(async(signal?:AbortSignal)=>{try{setLiveError(null);const [transitResponse,weatherResponse]=await Promise.all([fetch('/api/wien/transit/departures?diva=60200282&line=U2',{signal}),fetch('/api/wien/weather?lat=48.2061223&lon=16.4309681',{signal})]);if(!transitResponse.ok||!weatherResponse.ok)throw new Error('Live-Daten derzeit nicht erreichbar');const [nextTransit,nextWeather]=await Promise.all([transitResponse.json(),weatherResponse.json()]);setTransit(nextTransit);setWeather(nextWeather)}catch(reason){if((reason as Error).name!=='AbortError')setLiveError((reason as Error).message)}finally{setLiveLoading(false)}},[])
   useEffect(()=>{const controller=new AbortController();refreshLive(controller.signal);const timer=window.setInterval(()=>refreshLive(),30_000);return()=>{controller.abort();window.clearInterval(timer)}},[refreshLive])
@@ -98,7 +102,9 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const doneWeek = cards.filter((card) => card.status === 'done' && isWithinDays(card.updatedAt, 7)).length
   const open = cards.filter((card) => card.status !== 'done' && card.status !== 'archived').length
   const mixedOrder=(index:number)=>shuffleSeed===0?index:(index*37+shuffleSeed)%101
-  const focusCard=visibleCards[0]
+  const focusCard=visibleCards.find(card=>card.id===hoveredCardId)||visibleCards[0]
+  const handleBoardPointerMove=(event:React.PointerEvent<HTMLDivElement>)=>{if(focusMode)return;const tile=(event.target as Element).closest('.spark-tile');const title=tile?.querySelector('h3')?.textContent;const hovered=title?visibleCards.find(card=>card.title===title):undefined;if(hoveredCardRef.current!==(hovered?.id||null)){hoveredCardRef.current=hovered?.id||null;setHoveredCardId(hovered?.id||null)}const rect=event.currentTarget.getBoundingClientRect();const nx=(event.clientX-rect.left)/rect.width-.5;const ny=(event.clientY-rect.top)/rect.height-.5;const dead=.28;const velocity=(value:number)=>Math.abs(value)<dead?0:Math.sign(value)*Math.min(1.15,(Math.abs(value)-dead)*5.2);const next={x:velocity(nx),y:velocity(ny)};panVelocityRef.current=next;infiniteBoardRef.current?.classList.toggle('auto-panning',!!(next.x||next.y))}
+  const stopBoardPan=()=>{panVelocityRef.current={x:0,y:0};infiniteBoardRef.current?.classList.remove('auto-panning');hoveredCardRef.current=null;setHoveredCardId(null)}
 
   const completeCard = async (event: { stopPropagation: () => void } | undefined, card: Card) => {
     event?.stopPropagation()
@@ -128,14 +134,14 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
         const shape=!card.thumbnail&&card.title.length>32&&baseShape==='standard'?'wide':baseShape
         const titleSize=card.title.length>70?'title-very-long':card.title.length>34?'title-long':''
         const urgency=urgencyFor(card,now)
-        return <article key={`${copyIndex}-${card.id}`} className={`spark-tile ${shape} priority-${urgency.level} poster-${index%6} ${titleSize} ${card.thumbnail?'has-image':''} ${card.id===selectedCardId?'selected':''}`} style={{order:mixedOrder(index+2)}} onClick={()=>onSelectCard(card)} tabIndex={copyIndex===4?0:-1} onKeyDown={event=>{if(copyIndex===4&&(event.key==='Enter'||event.key===' ')){event.preventDefault();onSelectCard(card)}}}><span className="spark-dot-halo" aria-hidden="true"/>{card.thumbnail?<img src={card.thumbnail} alt="" onLoad={event=>{const ratio=event.currentTarget.naturalWidth/event.currentTarget.naturalHeight;const next=ratio>1.22?'wide':ratio<.82?'portrait':'standard';setImageShapes(current=>current[card.id]===next?current:{...current,[card.id]:next})}}/>:<div className={`spark-art art-${index%5}`} aria-hidden="true"><span>{index%3===0?'✦':index%3===1?'◐':'↗'}</span></div>}<div className="spark-tile-copy"><span className="spark-kind">{urgency.level==='normal'?(card.dueDate?'STEHT AN':index===0?'WIEDERENTDECKT':card.section.toUpperCase()):urgency.label}</span><h3>{card.title}</h3>{card.nextStep&&<p>NEXT · {card.nextStep}</p>}<div className="spark-tile-footer"><span>{urgency.label}</span>{card.status!=='done'&&card.status!=='archived'&&<button onClick={event=>completeCard(event,card)} title="Als erledigt markieren">✓</button>}</div></div></article>
+        return <article key={`${copyIndex}-${card.id}`} className={`spark-tile ${shape} priority-${urgency.level} poster-${index%6} ${titleSize} ${card.thumbnail?'has-image':''} ${card.id===selectedCardId?'selected':''}`} style={{order:mixedOrder(index+2)}} onClick={()=>onSelectCard(card)} tabIndex={copyIndex===4?0:-1} onKeyDown={event=>{if(copyIndex===4&&(event.key==='Enter'||event.key===' ')){event.preventDefault();onSelectCard(card)}}}><span className="spark-dot-halo" aria-hidden="true"/>{card.thumbnail?<img src={card.thumbnail} alt="" onLoad={event=>{const ratio=event.currentTarget.naturalWidth/event.currentTarget.naturalHeight;const next=ratio>1.22?'wide':ratio<.82?'portrait':'standard';setImageShapes(current=>current[card.id]===next?current:{...current,[card.id]:next})}}/>:<div className={`spark-art art-${index%5}`} aria-hidden="true"><span>{index%3===0?'✦':index%3===1?'◐':'↗'}</span></div>}<div className="spark-tile-copy"><span className="spark-kind">{urgency.level==='normal'?(card.dueDate?'STEHT AN':index===0?'WIEDERENTDECKT':card.section.toUpperCase()):urgency.label}</span><h3>{card.title}</h3>{card.nextStep&&<p>NEXT · {card.nextStep}</p>}<div className="spark-tile-footer"><span>{urgency.label}</span><div>{card.links?.[0]&&<a className="spark-direct-link" href={card.links[0].url} target="_blank" rel="noreferrer" onClick={event=>event.stopPropagation()} title={card.links[0].title||'Link öffnen'}>↗</a>}{card.status!=='done'&&card.status!=='archived'&&<button onClick={event=>completeCard(event,card)} title="Als erledigt markieren">✓</button>}</div></div></div></article>
       })}
       <a className="spark-tile inspiration-feed" style={{order:mixedOrder(visibleCards.length+2)}} href="https://www.midjourney.com/explore?tab=top" target="_blank" rel="noreferrer" aria-label="Midjourney Explore öffnen" tabIndex={copyIndex===4?0:-1}><div className="feed-grid">{Array.from({length:6}).map((_,index)=><i key={index} className={`feed-placeholder feed-${index}`}/>)}</div><div className="feed-label"><span>MIDJOURNEY EXPLORE</span><strong>Top öffnen ↗</strong></div></a>
     </div>
   </section>
 
   return (
-    <div className="daily-spark" ref={dailySparkRef}>
+    <div className="daily-spark" ref={dailySparkRef} onPointerMove={handleBoardPointerMove} onPointerLeave={stopBoardPan}>
       <div className="spark-stats">
         <div className="spark-clock"><span>{new Intl.DateTimeFormat('de-AT',{timeZone:'Europe/Vienna',weekday:'short',day:'2-digit',month:'short'}).format(now).toUpperCase()}</span><strong>{new Intl.DateTimeFormat('de-AT',{timeZone:'Europe/Vienna',hour:'2-digit',minute:'2-digit'}).format(now)}</strong></div>
         <div><span>HEUTE</span><strong>{doneToday} erledigt</strong></div>
@@ -157,7 +163,9 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
           <span className="focus-priority">{urgencyFor(focusCard,now).label}</span>
           {focusCard.dueDate && <time>{new Date(focusCard.dueDate).toLocaleDateString('de-AT',{weekday:'long',day:'2-digit',month:'long'})}</time>}
           <h2>{focusCard.title}</h2>
+          {focusCard.description && <p className="focus-description">{focusCard.description}</p>}
           {focusCard.nextStep && <p>{focusCard.nextStep}</p>}
+          {focusCard.links && focusCard.links.length > 0 && <nav className="focus-links" aria-label="Links">{focusCard.links.map(link=><a key={link.id} href={link.url} target="_blank" rel="noreferrer">{link.title||new URL(link.url).hostname} ↗</a>)}</nav>}
           <div><button onClick={()=>{setFocusMode(false);onSelectCard(focusCard)}}>Details</button><button className="focus-done" onClick={()=>completeCard(undefined,focusCard)}>✓ Erledigt</button></div>
         </article> : <p className="focus-empty">Alles erledigt. Zeit für eine neue Idee.</p>}
       </div>}

@@ -116,3 +116,6 @@ Der ältere Ordner `./files/` ist nur noch eine historische Projektkopie und dar
 - Karten besitzen die Prioritäten `normal`, `high` und `urgent`. Fälligkeit heute oder in der Vergangenheit wird automatisch als dringend hervorgehoben.
 - `F` öffnet/schließt den Fokusmodus mit der dringendsten offenen Aufgabe; `Esc` schließt ihn ebenfalls.
 - Das Infinite-Board verwendet magnetisches, sanftes Einrasten an den wiederkehrenden Kachelgruppen.
+- Karten können mehrere klickbare Weblinks speichern; der erste Link ist direkt auf der Übersichtskachel erreichbar.
+- `F` fokussiert die Karte unter dem Mauszeiger, ansonsten die dringendste Karte. Der Fokus zeigt Beschreibung, nächsten Schritt und Links direkt an.
+- Bewegt sich der Zeiger in Richtung eines Board-Randes, fährt das Infinite-Board dort langsam weiter.
