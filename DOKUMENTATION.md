@@ -119,3 +119,5 @@ Der ältere Ordner `./files/` ist nur noch eine historische Projektkopie und dar
 - Karten können mehrere klickbare Weblinks speichern; der erste Link ist direkt auf der Übersichtskachel erreichbar.
 - `F` fokussiert die Karte unter dem Mauszeiger, ansonsten die dringendste Karte. Der Fokus zeigt Beschreibung, nächsten Schritt und Links direkt an.
 - Bewegt sich der Zeiger in Richtung eines Board-Randes, fährt das Infinite-Board dort langsam weiter.
+- Der Fokusmodus zeigt Bild und alle wesentlichen Kartendetails direkt; ein zusätzlicher Details-Schritt entfällt.
+- Das magnetische Einrasten wird nach einer kurzen Ruhephase per sanfter Scroll-Animation ausgeführt statt durch abruptes CSS-Snapping.
