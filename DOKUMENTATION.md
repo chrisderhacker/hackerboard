@@ -113,3 +113,6 @@ Der ältere Ordner `./files/` ist nur noch eine historische Projektkopie und dar
 - Lange Notizen wachsen im Inspector mit ihrem Inhalt; lange Kacheltitel werden kleiner gesetzt und auf mehr Zeilen verteilt.
 - Im Karten-Editor können Bilder direkt hinzugefügt oder ersetzt werden; sie laufen über die bestehende `/api/cards/:id/files`-Uploadroute.
 - Die Übersicht und ihr Vollbildmodus laufen randlos bis an die verfügbare Bildschirmkante; es gibt keinen äußeren Rahmen oder Maskenverlauf.
+- Karten besitzen die Prioritäten `normal`, `high` und `urgent`. Fälligkeit heute oder in der Vergangenheit wird automatisch als dringend hervorgehoben.
+- `F` öffnet/schließt den Fokusmodus mit der dringendsten offenen Aufgabe; `Esc` schließt ihn ebenfalls.
+- Das Infinite-Board verwendet magnetisches, sanftes Einrasten an den wiederkehrenden Kachelgruppen.

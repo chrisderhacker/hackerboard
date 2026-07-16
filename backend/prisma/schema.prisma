@@ -13,6 +13,7 @@ model Card {
   description String?
   thumbnail   String?
   status      String   @default("inbox")
+  priority    String   @default("normal")
   nextStep    String?
   dueDate     DateTime?
   section     String   @default("inbox")

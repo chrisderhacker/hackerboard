@@ -37,6 +37,7 @@ export interface Card {
   description?: string
   thumbnail?: string
   status: string
+  priority?: 'normal' | 'high' | 'urgent'
   nextStep?: string
   dueDate?: string
   section: string

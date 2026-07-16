@@ -48,6 +48,16 @@ function isWithinDays(value: string | undefined, days: number) {
   return Date.now() - new Date(value).getTime() <= days * 86_400_000
 }
 
+function urgencyFor(card: Card, now = new Date()) {
+  const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Vienna', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now)
+  const due = card.dueDate?.slice(0, 10)
+  if (due && due < today) return { level: 'urgent', label: 'ÜBERFÄLLIG' }
+  if (due === today) return { level: 'urgent', label: 'HEUTE FÄLLIG' }
+  if (card.priority === 'urgent') return { level: 'urgent', label: 'JETZT' }
+  if (card.priority === 'high') return { level: 'high', label: 'WICHTIG' }
+  return { level: 'normal', label: 'NORMAL' }
+}
+
 export default function DailySpark({ cards, onSelectCard, onCardCompleted, selectedCardId }: DailySparkProps) {
   const [shuffleSeed, setShuffleSeed] = useState(0)
   const [reward, setReward] = useState<string | null>(null)
@@ -58,19 +68,23 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const [imageShapes,setImageShapes]=useState<Record<string,'standard'|'wide'|'portrait'>>({})
   const [now,setNow]=useState(()=>new Date())
   const [isFullscreen,setIsFullscreen]=useState(false)
+  const [focusMode,setFocusMode]=useState(false)
   const infiniteBoardRef=useRef<HTMLDivElement>(null)
   const dailySparkRef=useRef<HTMLDivElement>(null)
 
   useEffect(()=>{const timer=window.setInterval(()=>setNow(new Date()),1_000);const handleFullscreen=()=>setIsFullscreen(document.fullscreenElement===dailySparkRef.current);document.addEventListener('fullscreenchange',handleFullscreen);return()=>{window.clearInterval(timer);document.removeEventListener('fullscreenchange',handleFullscreen)}},[])
+  useEffect(()=>{const handleFocusKey=(event:KeyboardEvent)=>{const target=event.target as HTMLElement;if(target.matches('input, textarea, select, [contenteditable="true"]'))return;if(event.key.toLowerCase()==='f'){event.preventDefault();setFocusMode(current=>!current)}else if(event.key==='Escape')setFocusMode(false)};window.addEventListener('keydown',handleFocusKey);return()=>window.removeEventListener('keydown',handleFocusKey)},[])
 
   const refreshLive=useCallback(async(signal?:AbortSignal)=>{try{setLiveError(null);const [transitResponse,weatherResponse]=await Promise.all([fetch('/api/wien/transit/departures?diva=60200282&line=U2',{signal}),fetch('/api/wien/weather?lat=48.2061223&lon=16.4309681',{signal})]);if(!transitResponse.ok||!weatherResponse.ok)throw new Error('Live-Daten derzeit nicht erreichbar');const [nextTransit,nextWeather]=await Promise.all([transitResponse.json(),weatherResponse.json()]);setTransit(nextTransit);setWeather(nextWeather)}catch(reason){if((reason as Error).name!=='AbortError')setLiveError((reason as Error).message)}finally{setLiveLoading(false)}},[])
   useEffect(()=>{const controller=new AbortController();refreshLive(controller.signal);const timer=window.setInterval(()=>refreshLive(),30_000);return()=>{controller.abort();window.clearInterval(timer)}},[refreshLive])
 
   const visibleCards = useMemo(() => {
     const ranked = cards.filter((card) => card.section !== 'archive' && card.status !== 'done' && card.status !== 'archived').sort((a, b) => {
+      const urgencyRank = { urgent: 0, high: 1, normal: 2 }
+      const urgencyDifference = urgencyRank[urgencyFor(a).level as keyof typeof urgencyRank] - urgencyRank[urgencyFor(b).level as keyof typeof urgencyRank]
       const aDue = a.dueDate ? new Date(a.dueDate).getTime() : Number.MAX_SAFE_INTEGER
       const bDue = b.dueDate ? new Date(b.dueDate).getTime() : Number.MAX_SAFE_INTEGER
-      return aDue - bDue || (b.updatedAt || '').localeCompare(a.updatedAt || '')
+      return urgencyDifference || aDue - bDue || (b.updatedAt || '').localeCompare(a.updatedAt || '')
     })
     if (shuffleSeed === 0) return ranked.slice(0, 12)
     return ranked
@@ -84,9 +98,10 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
   const doneWeek = cards.filter((card) => card.status === 'done' && isWithinDays(card.updatedAt, 7)).length
   const open = cards.filter((card) => card.status !== 'done' && card.status !== 'archived').length
   const mixedOrder=(index:number)=>shuffleSeed===0?index:(index*37+shuffleSeed)%101
+  const focusCard=visibleCards[0]
 
-  const completeCard = async (event: React.MouseEvent, card: Card) => {
-    event.stopPropagation()
+  const completeCard = async (event: { stopPropagation: () => void } | undefined, card: Card) => {
+    event?.stopPropagation()
     if (card.status === 'done') return
     const response = await fetch(`/api/cards/${card.id}`, {
       method: 'PATCH',
@@ -96,6 +111,7 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
     if (!response.ok) return
     const updated = await response.json()
     onCardCompleted(updated)
+    if (focusCard?.id === card.id) setFocusMode(false)
     playRewardSound()
     setReward(card.title)
     window.setTimeout(() => setReward(null), 2600)
@@ -111,7 +127,8 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
         const baseShape=card.thumbnail?(imageShapes[card.id]||'standard'):tileShapes[index%tileShapes.length]
         const shape=!card.thumbnail&&card.title.length>32&&baseShape==='standard'?'wide':baseShape
         const titleSize=card.title.length>70?'title-very-long':card.title.length>34?'title-long':''
-        return <article key={`${copyIndex}-${card.id}`} className={`spark-tile ${shape} poster-${index%6} ${titleSize} ${card.thumbnail?'has-image':''} ${card.id===selectedCardId?'selected':''}`} style={{order:mixedOrder(index+2)}} onClick={()=>onSelectCard(card)} tabIndex={copyIndex===4?0:-1} onKeyDown={event=>{if(copyIndex===4&&(event.key==='Enter'||event.key===' ')){event.preventDefault();onSelectCard(card)}}}><span className="spark-dot-halo" aria-hidden="true"/>{card.thumbnail?<img src={card.thumbnail} alt="" onLoad={event=>{const ratio=event.currentTarget.naturalWidth/event.currentTarget.naturalHeight;const next=ratio>1.22?'wide':ratio<.82?'portrait':'standard';setImageShapes(current=>current[card.id]===next?current:{...current,[card.id]:next})}}/>:<div className={`spark-art art-${index%5}`} aria-hidden="true"><span>{index%3===0?'✦':index%3===1?'◐':'↗'}</span></div>}<div className="spark-tile-copy"><span className="spark-kind">{card.dueDate?'STEHT AN':index===0?'WIEDERENTDECKT':card.section.toUpperCase()}</span><h3>{card.title}</h3>{card.nextStep&&<p>NEXT · {card.nextStep}</p>}<div className="spark-tile-footer"><span>{card.status}</span>{card.status!=='done'&&card.status!=='archived'&&<button onClick={event=>completeCard(event,card)} title="Als erledigt markieren">✓</button>}</div></div></article>
+        const urgency=urgencyFor(card,now)
+        return <article key={`${copyIndex}-${card.id}`} className={`spark-tile ${shape} priority-${urgency.level} poster-${index%6} ${titleSize} ${card.thumbnail?'has-image':''} ${card.id===selectedCardId?'selected':''}`} style={{order:mixedOrder(index+2)}} onClick={()=>onSelectCard(card)} tabIndex={copyIndex===4?0:-1} onKeyDown={event=>{if(copyIndex===4&&(event.key==='Enter'||event.key===' ')){event.preventDefault();onSelectCard(card)}}}><span className="spark-dot-halo" aria-hidden="true"/>{card.thumbnail?<img src={card.thumbnail} alt="" onLoad={event=>{const ratio=event.currentTarget.naturalWidth/event.currentTarget.naturalHeight;const next=ratio>1.22?'wide':ratio<.82?'portrait':'standard';setImageShapes(current=>current[card.id]===next?current:{...current,[card.id]:next})}}/>:<div className={`spark-art art-${index%5}`} aria-hidden="true"><span>{index%3===0?'✦':index%3===1?'◐':'↗'}</span></div>}<div className="spark-tile-copy"><span className="spark-kind">{urgency.level==='normal'?(card.dueDate?'STEHT AN':index===0?'WIEDERENTDECKT':card.section.toUpperCase()):urgency.label}</span><h3>{card.title}</h3>{card.nextStep&&<p>NEXT · {card.nextStep}</p>}<div className="spark-tile-footer"><span>{urgency.label}</span>{card.status!=='done'&&card.status!=='archived'&&<button onClick={event=>completeCard(event,card)} title="Als erledigt markieren">✓</button>}</div></div></article>
       })}
       <a className="spark-tile inspiration-feed" style={{order:mixedOrder(visibleCards.length+2)}} href="https://www.midjourney.com/explore?tab=top" target="_blank" rel="noreferrer" aria-label="Midjourney Explore öffnen" tabIndex={copyIndex===4?0:-1}><div className="feed-grid">{Array.from({length:6}).map((_,index)=><i key={index} className={`feed-placeholder feed-${index}`}/>)}</div><div className="feed-label"><span>MIDJOURNEY EXPLORE</span><strong>Top öffnen ↗</strong></div></a>
     </div>
@@ -126,12 +143,24 @@ export default function DailySpark({ cards, onSelectCard, onCardCompleted, selec
         <div><span>NOCH OFFEN</span><strong>{open} Aufgaben</strong></div>
         <div className="streak"><span>CREATIVE STREAK</span><strong>⚡ Weiter so</strong></div>
         <button className="shuffle-button" onClick={() => {setShuffleSeed(Date.now());setLiveLoading(true);refreshLive()}}>✦ Neu mischen</button>
+        <button className="focus-button" onClick={()=>setFocusMode(true)} aria-label="Fokusmodus öffnen"><kbd>F</kbd> Fokus</button>
         <button className="fullscreen-button" onClick={()=>isFullscreen?document.exitFullscreen():dailySparkRef.current?.requestFullscreen()} aria-label={isFullscreen?'Vollbild verlassen':'Vollbild öffnen'} title={isFullscreen?'Vollbild verlassen':'Vollbild öffnen'}>{isFullscreen?'↙':'⛶'} <span>{isFullscreen?'Zurück':'Vollbild'}</span></button>
       </div>
 
       <div className="infinite-board" ref={infiniteBoardRef}>
         <div className="infinite-track">{Array.from({length:9}).map((_,index)=>renderMosaic(index))}</div>
       </div>
+
+      {focusMode && <div className="focus-mode" role="dialog" aria-modal="true" aria-label="Fokusmodus">
+        <button className="focus-close" onClick={()=>setFocusMode(false)} aria-label="Fokusmodus schließen">×</button>
+        {focusCard ? <article className={`focus-card priority-${urgencyFor(focusCard,now).level}`}>
+          <span className="focus-priority">{urgencyFor(focusCard,now).label}</span>
+          {focusCard.dueDate && <time>{new Date(focusCard.dueDate).toLocaleDateString('de-AT',{weekday:'long',day:'2-digit',month:'long'})}</time>}
+          <h2>{focusCard.title}</h2>
+          {focusCard.nextStep && <p>{focusCard.nextStep}</p>}
+          <div><button onClick={()=>{setFocusMode(false);onSelectCard(focusCard)}}>Details</button><button className="focus-done" onClick={()=>completeCard(undefined,focusCard)}>✓ Erledigt</button></div>
+        </article> : <p className="focus-empty">Alles erledigt. Zeit für eine neue Idee.</p>}
+      </div>}
 
 
       <div className={`reward-toast ${reward ? 'show' : ''}`} role="status" aria-live="polite">

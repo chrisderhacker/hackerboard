@@ -22,6 +22,7 @@
 .inspector-next { padding: .8rem .9rem; border-left: 2px solid var(--accent); background: linear-gradient(90deg, var(--accent-dim), transparent); }
 .inspector-next span { display: block; margin-bottom: .35rem; color: var(--accent); font-size: .56rem; font-weight: 600; letter-spacing: .14em; }
 .inspector-next input { font-size: .83rem; }
+.priority-picker{display:flex;flex-direction:column;gap:.5rem}.priority-picker>span{color:var(--text-muted);font-size:.56rem;font-weight:600;letter-spacing:.14em}.priority-picker>div{display:grid;grid-template-columns:repeat(3,1fr);gap:.35rem}.priority-picker button{min-width:0;padding:.55rem .3rem;border:1px solid var(--border);border-radius:6px;background:var(--glass);color:var(--text-muted);font:inherit;font-size:.64rem;cursor:pointer}.priority-picker button:hover{color:var(--text-primary)}.priority-picker button.active.normal{border-color:var(--accent);color:var(--accent);background:rgba(204,255,0,.08)}.priority-picker button.active.high{border-color:#ffb020;color:#ffc24a;background:rgba(255,176,32,.1)}.priority-picker button.active.urgent{border-color:#ff3b77;color:#ff6b98;background:rgba(255,59,119,.11)}
 .inspector-more { border-top: 1px solid var(--border); padding-top: .75rem; }
 .inspector-more summary { display: flex; align-items: center; justify-content: space-between; color: var(--text-secondary); font-size: .75rem; font-weight: 500; letter-spacing: .03em; cursor: pointer; list-style: none; }
 .inspector-more summary::-webkit-details-marker { display: none; }

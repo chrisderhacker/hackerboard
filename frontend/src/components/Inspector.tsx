@@ -16,6 +16,7 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
   const [description, setDescription] = useState(card.description || '')
   const [nextStep, setNextStep] = useState(card.nextStep || '')
   const [dueDate, setDueDate] = useState(card.dueDate?.split('T')[0] || '')
+  const [priority, setPriority] = useState<'normal' | 'high' | 'urgent'>(card.priority || 'normal')
   const [saving, setSaving] = useState(false)
   const [zoomed, setZoomed] = useState(false)
   const [uploadingImage, setUploadingImage] = useState(false)
@@ -28,6 +29,7 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
     setDescription(card.description || '')
     setNextStep(card.nextStep || '')
     setDueDate(card.dueDate?.split('T')[0] || '')
+    setPriority(card.priority || 'normal')
   }, [card.id])
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
   const handleSave = async () => {
     try {
       setSaving(true)
-      await patchCard({ title, description, nextStep, dueDate: dueDate || null })
+      await patchCard({ title, description, nextStep, dueDate: dueDate || null, priority })
       onClose()
     } catch (error) {
       console.error('Failed to update card:', error)
@@ -131,6 +133,15 @@ export default function Inspector({ card, onClose, onUpdate, onDelete }: Inspect
           <div className="inspector-next">
             <span>NÄCHSTER SCHRITT</span>
             <input value={nextStep} onChange={(event) => setNextStep(event.target.value)} placeholder="Was ist der nächste Move?" />
+          </div>
+        </div>
+
+        <div className="priority-picker" role="group" aria-label="Wichtigkeit">
+          <span>WICHTIGKEIT</span>
+          <div>
+            <button className={priority === 'normal' ? 'active normal' : ''} onClick={() => setPriority('normal')}>● Normal</button>
+            <button className={priority === 'high' ? 'active high' : ''} onClick={() => setPriority('high')}>● Wichtig</button>
+            <button className={priority === 'urgent' ? 'active urgent' : ''} onClick={() => setPriority('urgent')}>● Jetzt</button>
           </div>
         </div>
 

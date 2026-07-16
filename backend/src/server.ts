@@ -54,6 +54,7 @@ function pickCardData(body: Record<string, unknown>) {
   if (typeof body.description === 'string' || body.description === null) data.description = body.description
   if (typeof body.thumbnail === 'string' || body.thumbnail === null) data.thumbnail = body.thumbnail
   if (typeof body.status === 'string') data.status = body.status
+  if (typeof body.priority === 'string' && ['normal', 'high', 'urgent'].includes(body.priority)) data.priority = body.priority
   if (typeof body.nextStep === 'string' || body.nextStep === null) data.nextStep = body.nextStep
   if (typeof body.section === 'string') data.section = body.section
   if (Array.isArray(body.tags)) data.tags = JSON.stringify(body.tags)
